@@ -7,8 +7,7 @@
 
     <display-name>Archetype Created Web Application</display-name>
     <welcome-file-list>
-        <welcome-file>/home</welcome-file>
-        <welcome-file>home.html</welcome-file>
+        <welcome-file>authorization.jsp</welcome-file>
     </welcome-file-list>
 
     <servlet>
@@ -18,18 +17,29 @@
 
     <servlet-mapping>
         <servlet-name>RegistrationServlet</servlet-name>
-        <url-pattern>/Registration</url-pattern>
+        <url-pattern>/SignUp</url-pattern>
     </servlet-mapping>
 
-    <servlet>
-        <servlet-name>AuthorizationServlet</servlet-name>
-        <servlet-class>com.PaymentApp.servlets.AuthorizationServlet</servlet-class>
-    </servlet>
 
-    <servlet-mapping>
-        <servlet-name>AuthorizationServlet</servlet-name>
-        <url-pattern>/Authorization</url-pattern>
-    </servlet-mapping>
+    <filter>
+        <filter-name>AuthorizationFilter</filter-name>
+        <filter-class>com.PaymentApp.filters.AuthorizationFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>AuthorizationFilter</filter-name>
+        <url-pattern>/SignIn</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>RoleFilter</filter-name>
+        <filter-class>com.PaymentApp.filters.RoleFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>RoleFilter</filter-name>
+        <url-pattern>/SignIn</url-pattern>
+    </filter-mapping>
 
 
 </web-app>

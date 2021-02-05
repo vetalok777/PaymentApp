@@ -40,22 +40,49 @@ public class RegistrationServlet extends HttpServlet {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        if (result > 0) {
-            String jsp = "/user-details.jsp";
-            RequestDispatcher dispatcher = request.getRequestDispatcher(jsp);
-            dispatcher.forward(request, response);
-        } else {
+        if (isValidEmailAddress(login)) {
+            if (result > 0) {
+                String jsp = "/user-details.jsp";
+                RequestDispatcher dispatcher = request.getRequestDispatcher(jsp);
+                dispatcher.forward(request, response);
+            } else {
+                out.print(" <style>\n" +
+                        "   .colortext {\n" +
+                        "     color: red; \n" +
+                        "   }\n" +
+                        "  </style>" +
+                        "<p> <span class=\"colortext\">User with this email \n" +
+                        " is already exists!!! </span> \n" +
+                        "  </p>");
+                String jsp = "/user-registration.jsp";
+                RequestDispatcher dispatcher = request.getRequestDispatcher(jsp);
+                dispatcher.include(request, response);
+            }
+        }
+        else {
             out.print(" <style>\n" +
                     "   .colortext {\n" +
                     "     color: red; \n" +
                     "   }\n" +
                     "  </style>" +
-                    "<p> <span class=\"colortext\">User with this email \n" +
-                    " is already exists!!! </span> \n" +
+                    "<p> <span class=\"colortext\">Invalid email!!! </span> \n" +
                     "  </p>");
             String jsp = "/user-registration.jsp";
             RequestDispatcher dispatcher = request.getRequestDispatcher(jsp);
             dispatcher.include(request, response);
         }
     }
+
+    public static boolean isValidEmailAddress(String email) {
+        String ePattern = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$";
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
+        java.util.regex.Matcher m = p.matcher(email);
+        return m.matches();
+    }
+
+    public static void main(String[] args) {
+        String email = "vetalok@gmail.com";
+        System.out.println(isValidEmailAddress(email));
+    }
 }
+

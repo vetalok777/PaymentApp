@@ -10,7 +10,9 @@ public class UserJDBCDaoImpl implements UserDAO {
     private static final String USERNAME = "root";
     private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final String INSERT_NEW_USER = "INSERT INTO user (email, password, first_name) VALUES (?, ?, ?);";
-    private static final String FIND_USER = "SELECT email FROM user WHERE email = (?);";
+    private static final String FIND_USER_BY_LOGIN = "SELECT email FROM user WHERE email = (?);";
+    private static final String FIND_USER_BY_PASSWORD = "SELECT password FROM user WHERE email = (?);";
+    private static final String FIND_USER = "SELECT *  FROM user WHERE email = (?);";
 
 
     private static UserJDBCDaoImpl userJDBCDaoImpl;
@@ -62,21 +64,52 @@ public class UserJDBCDaoImpl implements UserDAO {
         return result;
     }
 
-    public String findByLogin(String login) throws SQLException {
+    @Override
+    public String findUserByLogin(String login) throws SQLException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
-        ResultSet rs = null;
+        ResultSet resultSet = null;
         String result = null;
         UserJDBCDaoImpl userJDBCDaoImpl = UserJDBCDaoImpl.getInstance();
         try {
             connection = userJDBCDaoImpl.getConnection();
             preparedStatement = connection.prepareStatement(FIND_USER);
             preparedStatement.setString(1, login);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                result = resultSet.getString(1);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (resultSet != null) {
+                resultSet.close();
+            }
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        }
+        return result;
+    }
+
+
+    public String findUserPassword(String login) throws SQLException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet rs = null;
+        String result = null;
+        try {
+            connection = userJDBCDaoImpl.getConnection();
+            preparedStatement = connection.prepareStatement(FIND_USER_BY_PASSWORD);
+            preparedStatement.setString(1, login);
             rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 result = rs.getString(1);
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -93,10 +126,43 @@ public class UserJDBCDaoImpl implements UserDAO {
         return result;
     }
 
+    public User findUser(String login) throws SQLException {
+        User user = new User();
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet rs = null;
+        try {
+            connection = userJDBCDaoImpl.getConnection();
+            preparedStatement = connection.prepareStatement(FIND_USER);
+            preparedStatement.setString(1, login);
+            rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                user.setFirstName(rs.getString("first_name"));
+                user.setLogin(rs.getString("email"));
+                user.setId(rs.getInt("id"));
+                user.setPassword(rs.getString("password"));
+                user.setRole(rs.getString("role"));
+                user.setStatus(rs.getInt("user_status"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        }
+        return user;
+    }
 
     public static void main(String[] args) throws SQLException {
         UserJDBCDaoImpl userJDBCDaoImpl = UserJDBCDaoImpl.getInstance();
-        User user = new User("vetalok777@gmail.com", "123123", "vit");
-        userJDBCDaoImpl.insertUser(user);
+        String name = "vetalok777@gmail.com";
+        System.out.println(userJDBCDaoImpl.findUser(name).getPassword());
     }
 }
