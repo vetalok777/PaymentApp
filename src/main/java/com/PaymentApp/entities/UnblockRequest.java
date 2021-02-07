@@ -6,6 +6,7 @@ public class UnblockRequest {
     private Integer id;
     private String status;
     private Date creationDate;
+    private Integer consideredByAdmin;
 
 
     public Integer getId() {
@@ -32,5 +33,11 @@ public class UnblockRequest {
         this.creationDate = creationDate;
     }
 
+    public Integer getConsideredByAdmin() {
+        return consideredByAdmin;
+    }
 
+    public void setConsideredByAdmin(Integer consideredByAdmin) {
+        this.consideredByAdmin = consideredByAdmin;
+    }
 }

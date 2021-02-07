@@ -4,6 +4,9 @@ import com.PaymentApp.entities.User;
 
 import java.sql.*;
 
+import  com.PaymentApp.servlets.RegistrationServlet;
+
+
 public class UserJDBCDaoImpl implements UserDAO {
     private static final String URL = "jdbc:mysql://localhost/payment_system_db?serverTimezone=UTC";
     private static final String PASSWORD = "root";
@@ -160,9 +163,5 @@ public class UserJDBCDaoImpl implements UserDAO {
         return user;
     }
 
-    public static void main(String[] args) throws SQLException {
-        UserJDBCDaoImpl userJDBCDaoImpl = UserJDBCDaoImpl.getInstance();
-        String name = "vetalok777@gmail.com";
-        System.out.println(userJDBCDaoImpl.findUser(name).getPassword());
-    }
+
 }

@@ -58,8 +58,7 @@ public class RegistrationServlet extends HttpServlet {
                 RequestDispatcher dispatcher = request.getRequestDispatcher(jsp);
                 dispatcher.include(request, response);
             }
-        }
-        else {
+        } else {
             out.print(" <style>\n" +
                     "   .colortext {\n" +
                     "     color: red; \n" +
@@ -80,9 +79,5 @@ public class RegistrationServlet extends HttpServlet {
         return m.matches();
     }
 
-    public static void main(String[] args) {
-        String email = "vetalok@gmail.com";
-        System.out.println(isValidEmailAddress(email));
-    }
 }
 

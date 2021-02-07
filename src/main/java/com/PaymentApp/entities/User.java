@@ -7,17 +7,10 @@ public class User {
     private String password;
     private String firstName;
     private Integer status;
-    private String role;
 
-    public String getRole() {
-        return role;
+
+    public User() {
     }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-public User(){}
 
     public User(String login, String password) {
         this.login = login;
