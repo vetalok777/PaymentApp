@@ -17,18 +17,9 @@ public class RoleFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         User user = (User) request.getAttribute("currentUser");
-        if (user.getRole().equals("user")) {
-            String html = "/user-home.html";
-            RequestDispatcher dispatcher = servletRequest.getRequestDispatcher(html);
-            dispatcher.forward(servletRequest, servletResponse);
-        }
-        if (user.getRole().equals("admin")) {
-            String html = "/admin-home.html";
-            RequestDispatcher dispatcher = servletRequest.getRequestDispatcher(html);
-            dispatcher.forward(servletRequest, servletResponse);
 
-        }
     }
+
 
     @Override
     public void destroy() {

@@ -3,6 +3,8 @@ package com.PaymentApp.DAO;
 import com.PaymentApp.entities.User;
 
 import java.sql.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import  com.PaymentApp.servlets.RegistrationServlet;
 
@@ -144,7 +146,6 @@ public class UserJDBCDaoImpl implements UserDAO {
                 user.setLogin(rs.getString("email"));
                 user.setId(rs.getInt("id"));
                 user.setPassword(rs.getString("password"));
-                user.setRole(rs.getString("role"));
                 user.setStatus(rs.getInt("user_status"));
             }
         } catch (SQLException e) {
@@ -163,5 +164,15 @@ public class UserJDBCDaoImpl implements UserDAO {
         return user;
     }
 
+    public static boolean isValidEmailAddress(String email) {
+        String ePattern = "^([a-z0-9_-]+\\.)*[a-z0-9_-]+@[a-z0-9_-]+(\\.[a-z0-9_-]+)*\\.[a-z]{2,6}$";
+        Pattern p = Pattern.compile(ePattern);
+       Matcher m = p.matcher(email);
+        return m.matches();
+    }
 
+    public static void main(String[] args) {
+        String email = "vetalok777@gmail.com";
+        System.out.println( isValidEmailAddress(email));
+    }
 }
