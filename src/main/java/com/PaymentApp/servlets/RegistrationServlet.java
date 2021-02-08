@@ -13,6 +13,23 @@ import java.sql.SQLException;
 public class RegistrationServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     UserJDBCDaoImpl userJDBCDaoImpl = UserJDBCDaoImpl.getInstance();
+    public static String INVALID_EMAIL_OR_PASSWORD = (" <style>\n" +
+            "   .colortext {\n" +
+            "     color: red; \n" +
+            "   }\n" +
+            "  </style>" +
+            "<p> <span class=\"colortext\">Invalid email or password!" +
+            "Password should contains : 8-15 characters, at least " +
+            "one uppercase letter and one digit! </span> \n" +
+            "  </p>");
+    public static String EMAIL_ALREADY_EXISTS = (" <style>\n" +
+            "   .colortext {\n" +
+            "     color: red; \n" +
+            "   }\n" +
+            "  </style>" +
+            "<p> <span class=\"colortext\">User with this email \n" +
+            " is already exists!!! </span> \n" +
+            "  </p>");
 
 
     public RegistrationServlet() {
@@ -32,52 +49,48 @@ public class RegistrationServlet extends HttpServlet {
         String password = request.getParameter("password");
         String firstname = request.getParameter("firstname");
         User user = new User(login, password, firstname);
-        int result = 0;
+        int result;
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
         try {
-            result = userJDBCDaoImpl.insertUser(user);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        if (isValidEmailAddress(login)) {
-            if (result > 0) {
-                String jsp = "/user-details.jsp";
-                RequestDispatcher dispatcher = request.getRequestDispatcher(jsp);
-                dispatcher.forward(request, response);
+            if (isValidEmailAddress(login) && isValidPassword(password)) {
+                result = userJDBCDaoImpl.insertUser(user);
+                if (result > 0) {
+                    String jsp = "/user-details.jsp";
+                    RequestDispatcher dispatcher = request.getRequestDispatcher(jsp);
+                    dispatcher.forward(request, response);
+                } else {
+                    out.print(EMAIL_ALREADY_EXISTS);
+                    String jsp = "/user-registration.jsp";
+                    RequestDispatcher dispatcher = request.getRequestDispatcher(jsp);
+                    dispatcher.include(request, response);
+                }
             } else {
-                out.print(" <style>\n" +
-                        "   .colortext {\n" +
-                        "     color: red; \n" +
-                        "   }\n" +
-                        "  </style>" +
-                        "<p> <span class=\"colortext\">User with this email \n" +
-                        " is already exists!!! </span> \n" +
-                        "  </p>");
+                out.print(INVALID_EMAIL_OR_PASSWORD);
                 String jsp = "/user-registration.jsp";
                 RequestDispatcher dispatcher = request.getRequestDispatcher(jsp);
                 dispatcher.include(request, response);
             }
-        } else {
-            out.print(" <style>\n" +
-                    "   .colortext {\n" +
-                    "     color: red; \n" +
-                    "   }\n" +
-                    "  </style>" +
-                    "<p> <span class=\"colortext\">Invalid email!!! </span> \n" +
-                    "  </p>");
-            String jsp = "/user-registration.jsp";
-            RequestDispatcher dispatcher = request.getRequestDispatcher(jsp);
-            dispatcher.include(request, response);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
+
     public static boolean isValidEmailAddress(String email) {
-        String ePattern = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$";
+        String ePattern = "^([a-z0-9_-]+\\.)*[a-z0-9_-]+@[a-z0-9_-]+(\\.[a-z0-9_-]+)*\\.[a-z]{2,6}$";
         java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
         java.util.regex.Matcher m = p.matcher(email);
         return m.matches();
     }
+
+    public static boolean isValidPassword(String email) {
+        String ePattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,15}$";
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
+        java.util.regex.Matcher m = p.matcher(email);
+        return m.matches();
+    }
+
 
 }
 

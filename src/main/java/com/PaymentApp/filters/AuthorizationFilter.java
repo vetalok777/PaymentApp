@@ -5,7 +5,6 @@ import com.PaymentApp.entities.User;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -20,16 +19,18 @@ public class AuthorizationFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        String login = servletRequest.getParameter("email");
-        String password = servletRequest.getParameter("password");
-        PrintWriter out = servletResponse.getWriter();
         HttpServletRequest request = (HttpServletRequest) servletRequest;
+        String login = (String) request.getAttribute("email");
+        String password = (String) request.getAttribute("password");
+        PrintWriter out = servletResponse.getWriter();
         try {
             User user = userJDBCDaoImpl.findUser(login);
             if (user != null) {
                 if (login.equals(user.getLogin())
                         && (password.equals(user.getPassword()))) {
-                    request.setAttribute("currentUser", user);
+                    String html = "/user-home.html";
+                    RequestDispatcher dispatcher = servletRequest.getRequestDispatcher(html);
+                    dispatcher.forward(servletRequest, servletResponse);
                     filterChain.doFilter(servletRequest, servletResponse);
                 } else {
                     out.print(" <style>\n" +

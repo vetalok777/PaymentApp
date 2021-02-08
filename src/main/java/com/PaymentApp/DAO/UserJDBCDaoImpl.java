@@ -3,11 +3,6 @@ package com.PaymentApp.DAO;
 import com.PaymentApp.entities.User;
 
 import java.sql.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import  com.PaymentApp.servlets.RegistrationServlet;
-
 
 public class UserJDBCDaoImpl implements UserDAO {
     private static final String URL = "jdbc:mysql://localhost/payment_system_db?serverTimezone=UTC";
@@ -15,7 +10,6 @@ public class UserJDBCDaoImpl implements UserDAO {
     private static final String USERNAME = "root";
     private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final String INSERT_NEW_USER = "INSERT INTO user (email, password, first_name) VALUES (?, ?, ?);";
-    private static final String FIND_USER_BY_LOGIN = "SELECT email FROM user WHERE email = (?);";
     private static final String FIND_USER_BY_PASSWORD = "SELECT password FROM user WHERE email = (?);";
     private static final String FIND_USER = "SELECT *  FROM user WHERE email = (?);";
 
@@ -69,38 +63,6 @@ public class UserJDBCDaoImpl implements UserDAO {
         return result;
     }
 
-    @Override
-    public String findUserByLogin(String login) throws SQLException {
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-        String result = null;
-        UserJDBCDaoImpl userJDBCDaoImpl = UserJDBCDaoImpl.getInstance();
-        try {
-            connection = userJDBCDaoImpl.getConnection();
-            preparedStatement = connection.prepareStatement(FIND_USER);
-            preparedStatement.setString(1, login);
-            resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                result = resultSet.getString(1);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            if (resultSet != null) {
-                resultSet.close();
-            }
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
-        }
-        return result;
-    }
-
 
     public String findUserPassword(String login) throws SQLException {
         Connection connection = null;
@@ -131,6 +93,7 @@ public class UserJDBCDaoImpl implements UserDAO {
         return result;
     }
 
+    @Override
     public User findUser(String login) throws SQLException {
         User user = new User();
         Connection connection = null;
@@ -164,15 +127,5 @@ public class UserJDBCDaoImpl implements UserDAO {
         return user;
     }
 
-    public static boolean isValidEmailAddress(String email) {
-        String ePattern = "^([a-z0-9_-]+\\.)*[a-z0-9_-]+@[a-z0-9_-]+(\\.[a-z0-9_-]+)*\\.[a-z]{2,6}$";
-        Pattern p = Pattern.compile(ePattern);
-       Matcher m = p.matcher(email);
-        return m.matches();
-    }
 
-    public static void main(String[] args) {
-        String email = "vetalok777@gmail.com";
-        System.out.println( isValidEmailAddress(email));
-    }
 }
