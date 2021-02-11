@@ -6,9 +6,6 @@ import com.PaymentApp.entities.User;
 import java.sql.*;
 
 public class AdminJDBCDaoImpl implements AdminDAO {
-    private static final String URL = "jdbc:mysql://localhost/payment_system_db?serverTimezone=UTC";
-    private static final String PASSWORD = "root";
-    private static final String USERNAME = "root";
     private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final String FIND_ADMIN = "SELECT *  FROM admin WHERE login = (?);";
 
@@ -30,9 +27,6 @@ public class AdminJDBCDaoImpl implements AdminDAO {
         return adminJDBCDaoImpl;
     }
 
-    public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USERNAME, PASSWORD);
-    }
 
 
     @Override
@@ -42,7 +36,7 @@ public class AdminJDBCDaoImpl implements AdminDAO {
         PreparedStatement preparedStatement = null;
         ResultSet rs = null;
         try {
-            connection = adminJDBCDaoImpl.getConnection();
+            connection = DBManager.getInstance().getConnection();
             preparedStatement = connection.prepareStatement(FIND_ADMIN);
             preparedStatement.setString(1, login);
             rs = preparedStatement.executeQuery();
@@ -52,6 +46,7 @@ public class AdminJDBCDaoImpl implements AdminDAO {
                 admin.setId(rs.getInt("id"));
             }
         } catch (SQLException e) {
+            DBManager.getInstance().rollbackAndClose(connection);
             e.printStackTrace();
         } finally {
             if (rs != null) {
@@ -60,16 +55,15 @@ public class AdminJDBCDaoImpl implements AdminDAO {
             if (preparedStatement != null) {
                 preparedStatement.close();
             }
-            if (connection != null) {
-                connection.close();
-            }
+        DBManager.getInstance().commitAndClose(connection);
         }
         return admin;
     }
 
 
     public static void main(String[] args) throws SQLException {
-        Admin admin = getInstance().findAdmin("vetalok777@gmail.com");
-        System.out.println(admin.getLogin());
+        AdminJDBCDaoImpl adminJDBCDaoImpl = AdminJDBCDaoImpl.getInstance();
+        String name = "admin";
+        System.out.println(adminJDBCDaoImpl.findAdmin("name").toString());
     }
 }

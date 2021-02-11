@@ -5,6 +5,7 @@ import com.PaymentApp.entities.User;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -28,10 +29,12 @@ public class AuthorizationFilter implements Filter {
             if (user != null) {
                 if (login.equals(user.getLogin())
                         && (password.equals(user.getPassword()))) {
-                    String html = "/user-home.html";
-                    RequestDispatcher dispatcher = servletRequest.getRequestDispatcher(html);
+                    HttpSession session = request.getSession();
+                    session.setAttribute("username", login);
+                    request.setAttribute("name", user.getFirstName());
+
+                    RequestDispatcher dispatcher = servletRequest.getRequestDispatcher("/HomePage");
                     dispatcher.forward(servletRequest, servletResponse);
-                    filterChain.doFilter(servletRequest, servletResponse);
                 } else {
                     out.print(" <style>\n" +
                             "   .colortext {\n" +
@@ -41,8 +44,7 @@ public class AuthorizationFilter implements Filter {
                             "<p> <span class=\"colortext\">Invalid username or password!!! \n" +
                             " </span> \n" +
                             "  </p>");
-                    String jsp = "/authorization.jsp";
-                    RequestDispatcher dispatcher = servletRequest.getRequestDispatcher(jsp);
+                    RequestDispatcher dispatcher = servletRequest.getRequestDispatcher("/authorization.jsp");
                     dispatcher.include(servletRequest, servletResponse);
                 }
             }

@@ -1,11 +1,11 @@
 package com.PaymentApp.entities;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class UnblockRequest {
     private Integer id;
     private String status;
-    private Date creationDate;
+    private LocalDate creationDate;
     private Integer consideredByAdmin;
 
 
@@ -25,11 +25,11 @@ public class UnblockRequest {
         this.status = status;
     }
 
-    public Date getCreationDate() {
+    public LocalDate getCreationDate() {
         return creationDate;
     }
 
-    public void setCreation_date(Date creationDate) {
+    public void setCreation_date(LocalDate creationDate) {
         this.creationDate = creationDate;
     }
 

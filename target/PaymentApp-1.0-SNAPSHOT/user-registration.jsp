@@ -23,6 +23,9 @@
             </tr>
         </table>
         <input type="submit" value="Submit"/>
+        <br>
+        <br>
+        <a href="/PaymentApp">Home Page</a>
     </form>
 </div>
 </body>

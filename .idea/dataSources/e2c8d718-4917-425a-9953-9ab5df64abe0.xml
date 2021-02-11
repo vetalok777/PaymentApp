@@ -1058,7 +1058,6 @@ team_id</ColNames>
       <Position>4</Position>
       <DataType>decimal(10)|0s</DataType>
       <NotNull>1</NotNull>
-      <DefaultExpression>20</DefaultExpression>
     </column>
     <column id="321" parent="291" name="card_status">
       <Position>5</Position>

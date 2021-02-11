@@ -1,18 +1,22 @@
 package com.PaymentApp.servlets;
 
+import com.PaymentApp.DAO.CardJDBCDaoImpl;
 import com.PaymentApp.DAO.UserJDBCDaoImpl;
+import com.PaymentApp.entities.Card;
 import com.PaymentApp.entities.User;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.sql.SQLException;
 
 
 public class RegistrationServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     UserJDBCDaoImpl userJDBCDaoImpl = UserJDBCDaoImpl.getInstance();
+    CardJDBCDaoImpl cardJDBCDaoImpl = CardJDBCDaoImpl.getInstance();
     public static String INVALID_EMAIL_OR_PASSWORD = (" <style>\n" +
             "   .colortext {\n" +
             "     color: red; \n" +
@@ -56,19 +60,19 @@ public class RegistrationServlet extends HttpServlet {
             if (isValidEmailAddress(login) && isValidPassword(password)) {
                 result = userJDBCDaoImpl.insertUser(user);
                 if (result > 0) {
-                    String jsp = "/user-details.jsp";
-                    RequestDispatcher dispatcher = request.getRequestDispatcher(jsp);
+                    User user1 = userJDBCDaoImpl.findUser(login);
+                    Card card = new Card("FirstCard", CardJDBCDaoImpl.randomCardNumber(), new BigDecimal(20), user1.getId());
+                    cardJDBCDaoImpl.insertCard(card);
+                    RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/user-view/user-details.jsp");
                     dispatcher.forward(request, response);
                 } else {
                     out.print(EMAIL_ALREADY_EXISTS);
-                    String jsp = "/user-registration.jsp";
-                    RequestDispatcher dispatcher = request.getRequestDispatcher(jsp);
+                    RequestDispatcher dispatcher = request.getRequestDispatcher("/user-registration.jsp");
                     dispatcher.include(request, response);
                 }
             } else {
                 out.print(INVALID_EMAIL_OR_PASSWORD);
-                String jsp = "/user-registration.jsp";
-                RequestDispatcher dispatcher = request.getRequestDispatcher(jsp);
+                RequestDispatcher dispatcher = request.getRequestDispatcher("/user-registration.jsp");
                 dispatcher.include(request, response);
             }
         } catch (SQLException e) {

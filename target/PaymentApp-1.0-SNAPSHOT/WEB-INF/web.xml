@@ -20,13 +20,53 @@
         <url-pattern>/SignUp</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>LogOutServlet</servlet-name>
+        <servlet-class>com.PaymentApp.servlets.LogOutServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>LogOutServlet</servlet-name>
+        <url-pattern>/LogOut</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>UserHomePageServlet</servlet-name>
+        <servlet-class>com.PaymentApp.servlets.user.UserHomePageServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>UserHomePageServlet</servlet-name>
+        <url-pattern>/HomePage</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>CardReplenishmentServlet</servlet-name>
+        <servlet-class>com.PaymentApp.servlets.user.CardReplenishmentServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>CardReplenishmentServlet</servlet-name>
+        <url-pattern>/Replenishment</url-pattern>
+    </servlet-mapping>
+
     <filter>
-        <filter-name>RoleFilter</filter-name>
-        <filter-class>com.PaymentApp.filters.RoleFilter</filter-class>
+        <filter-name>CheckAdminFilter</filter-name>
+        <filter-class>com.PaymentApp.filters.CheckAdminFilter</filter-class>
     </filter>
 
     <filter-mapping>
-        <filter-name>RoleFilter</filter-name>
+        <filter-name>CheckAdminFilter</filter-name>
+        <url-pattern>/SignIn</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>CheckUserStatusFilter</filter-name>
+        <filter-class>com.PaymentApp.filters.CheckUserStatusFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>CheckUserStatusFilter</filter-name>
         <url-pattern>/SignIn</url-pattern>
     </filter-mapping>
 
@@ -39,8 +79,6 @@
         <filter-name>AuthorizationFilter</filter-name>
         <url-pattern>/SignIn</url-pattern>
     </filter-mapping>
-
-
 
 
 </web-app>

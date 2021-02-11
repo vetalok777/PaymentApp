@@ -1,13 +1,13 @@
 package com.PaymentApp.entities;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Payment {
 
     private Integer id;
     private BigDecimal amount;
-    private Date date;
+    private LocalDate date;
     private String status;
     private Integer sender_id;
     private Integer receiver_id;
@@ -29,11 +29,11 @@ public class Payment {
         this.amount = amount;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

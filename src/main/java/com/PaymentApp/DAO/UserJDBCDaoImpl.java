@@ -127,5 +127,10 @@ public class UserJDBCDaoImpl implements UserDAO {
         return user;
     }
 
-
+    public static void main(String[] args) throws SQLException {
+        String name = "vetalok777@gmail.com";
+        userJDBCDaoImpl = UserJDBCDaoImpl.getInstance();
+        User user = userJDBCDaoImpl.findUser(name);
+        System.out.println(user.getFirstName());
+    }
 }

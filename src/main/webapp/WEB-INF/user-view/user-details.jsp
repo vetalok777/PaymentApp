@@ -6,6 +6,8 @@
 </head>
 <body>
 <h1>Registration is successful</h1>
-<a href="/PaymentApp">Home Page</a>
+<form action="/PaymentApp/authorization.jsp">
+    <input type="submit" value="MainPage">
+</form>
 </body>
 </html>
