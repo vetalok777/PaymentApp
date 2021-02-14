@@ -24,6 +24,9 @@ public class Card {
         this.userId = userId;
         this.status = status;
     }
+    public Card(String number){
+       this.number = number;
+    }
 
 
     public Integer getId() {

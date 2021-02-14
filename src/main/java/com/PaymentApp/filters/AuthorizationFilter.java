@@ -26,27 +26,30 @@ public class AuthorizationFilter implements Filter {
         PrintWriter out = servletResponse.getWriter();
         try {
             User user = userJDBCDaoImpl.findUser(login);
-            if (user != null) {
-                if (login.equals(user.getLogin())
-                        && (password.equals(user.getPassword()))) {
-                    HttpSession session = request.getSession();
-                    session.setAttribute("username", login);
-                    request.setAttribute("name", user.getFirstName());
 
-                    RequestDispatcher dispatcher = servletRequest.getRequestDispatcher("/HomePage");
-                    dispatcher.forward(servletRequest, servletResponse);
-                } else {
-                    out.print(" <style>\n" +
-                            "   .colortext {\n" +
-                            "     color: red; \n" +
-                            "   }\n" +
-                            "  </style>" +
-                            "<p> <span class=\"colortext\">Invalid username or password!!! \n" +
-                            " </span> \n" +
-                            "  </p>");
-                    RequestDispatcher dispatcher = servletRequest.getRequestDispatcher("/authorization.jsp");
-                    dispatcher.include(servletRequest, servletResponse);
-                }
+            if (user.getStatus() < 1) {
+                RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/errors-pages/user-blocked-error.jsp");
+                dispatcher.forward(servletRequest, servletResponse);
+            }
+            if (login.equals(user.getLogin())
+                    && (password.equals(user.getPassword()))) {
+                HttpSession session = request.getSession();
+                session.setAttribute("username", login);
+                request.setAttribute("name", user.getFirstName());
+
+                RequestDispatcher dispatcher = servletRequest.getRequestDispatcher("/HomePage");
+                dispatcher.forward(servletRequest, servletResponse);
+            } else {
+                out.print(" <style>\n" +
+                        "   .colortext {\n" +
+                        "     color: red; \n" +
+                        "   }\n" +
+                        "  </style>" +
+                        "<p> <span class=\"colortext\">Invalid username or password!!! \n" +
+                        " </span> \n" +
+                        "  </p>");
+                RequestDispatcher dispatcher = servletRequest.getRequestDispatcher("/authorization.jsp");
+                dispatcher.include(servletRequest, servletResponse);
             }
         } catch (SQLException e) {
             e.printStackTrace();

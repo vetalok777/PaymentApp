@@ -50,6 +50,36 @@
         <url-pattern>/Replenishment</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>PaymentServlet</servlet-name>
+        <servlet-class>com.PaymentApp.servlets.user.PaymentServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>PaymentServlet</servlet-name>
+        <url-pattern>/Payment</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>PaymentsDetailsServlet</servlet-name>
+        <servlet-class>com.PaymentApp.servlets.user.PaymentsDetailsServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>PaymentsDetailsServlet</servlet-name>
+        <url-pattern>/PaymentDetails</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>PaymentActionServlet</servlet-name>
+        <servlet-class>com.PaymentApp.servlets.user.PaymentActionServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>PaymentActionServlet</servlet-name>
+        <url-pattern>/PaymentAction</url-pattern>
+    </servlet-mapping>
+
     <filter>
         <filter-name>CheckAdminFilter</filter-name>
         <filter-class>com.PaymentApp.filters.CheckAdminFilter</filter-class>
@@ -57,16 +87,6 @@
 
     <filter-mapping>
         <filter-name>CheckAdminFilter</filter-name>
-        <url-pattern>/SignIn</url-pattern>
-    </filter-mapping>
-
-    <filter>
-        <filter-name>CheckUserStatusFilter</filter-name>
-        <filter-class>com.PaymentApp.filters.CheckUserStatusFilter</filter-class>
-    </filter>
-
-    <filter-mapping>
-        <filter-name>CheckUserStatusFilter</filter-name>
         <url-pattern>/SignIn</url-pattern>
     </filter-mapping>
 

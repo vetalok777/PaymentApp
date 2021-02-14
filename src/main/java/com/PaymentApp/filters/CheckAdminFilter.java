@@ -33,6 +33,7 @@ public class CheckAdminFilter implements Filter {
         HttpSession session = request.getSession();
         try {
             Admin admin = adminJDBCDaoImpl.findAdmin(login);
+
             if (login.equals(admin.getLogin())) {
                 if (password.equals(admin.getPassword())) {
                     session.setAttribute("username", login);
@@ -46,12 +47,12 @@ public class CheckAdminFilter implements Filter {
                     dispatcher.include(request, response);
                 }
             } else {
-                System.out.println(admin.getLogin());
                 session.setAttribute("username", login);
                 request.setAttribute("email", login);
                 request.setAttribute("password", password);
                 filterChain.doFilter(servletRequest, servletResponse);
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }

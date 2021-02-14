@@ -1,34 +1,25 @@
-package com.PaymentApp.entities;
+package com.PaymentApp.DTO;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class Payment {
-
+public class PaymentDTO {
     private Integer id;
     private BigDecimal amount;
     private LocalDateTime date;
     private String status;
-    private Integer sender_id;
-    private Integer receiver_id;
+    private String sender_card;
+    private String receiver_card;
 
-    public Payment(BigDecimal amount, LocalDateTime date, Integer sender_id, Integer receiver_id) {
-        this.amount = amount;
-        this.date = date;
-        this.sender_id = sender_id;
-        this.receiver_id = receiver_id;
-    }
-
-    public Payment(Integer id, BigDecimal amount, LocalDateTime date, String status, Integer sender, Integer receiver) {
+    public PaymentDTO(Integer id, BigDecimal amount, LocalDateTime date, String status, String sender, String receiver) {
         this.id = id;
         this.amount = amount;
         this.date = date;
         this.status = status;
-        this.sender_id = sender;
-        this.receiver_id = receiver;
-    }
+        this.sender_card = sender;
+        this.receiver_card = receiver;
 
+    }
 
     public Integer getId() {
         return id;
@@ -62,30 +53,30 @@ public class Payment {
         this.status = status;
     }
 
-    public Integer getSender_id() {
-        return sender_id;
+    public String getSender_card() {
+        return sender_card;
     }
 
-    public void setSender_id(Integer sender_id) {
-        this.sender_id = sender_id;
+    public void setSender_card(String sender_card) {
+        this.sender_card = sender_card;
     }
 
-    public Integer getReceiver_id() {
-        return receiver_id;
+    public String getReceiver_card() {
+        return receiver_card;
     }
 
-    public void setReceiver_id(Integer receiver_id) {
-        this.receiver_id = receiver_id;
+    public void setReceiver_card(String receiver_card) {
+        this.receiver_card = receiver_card;
     }
 
     @Override
     public String toString() {
-        return "Payment{" +
+        return "PaymentDTO{" +
                 "amount=" + amount +
                 ", date=" + date +
                 ", status='" + status + '\'' +
-                ", sender_id=" + sender_id +
-                ", receiver_id=" + receiver_id +
+                ", sender_card='" + sender_card + '\'' +
+                ", receiver_card='" + receiver_card + '\'' +
                 '}';
     }
 }

@@ -38,8 +38,8 @@
     </form>
 
 
-    <form action="Info">
-        <input type="submit" value="Info">
+    <form action="PaymentDetails" method="post">
+        <input type="submit" value="Your payments">
     </form>
 </div>
 <h1>Welcome,<%=request.getAttribute("login")%>
@@ -69,8 +69,15 @@
             </td>
         </tr>
     </table>
-
 </c:forEach>
+<br>
 
+<%
+session.setAttribute("cards", request.getAttribute("cards"));
+
+%>
+<form action="${pageContext.request.contextPath}/Payment" method="get">
+    <input type="submit" value="Create new payment">
+</form>
 </body>
 </html>

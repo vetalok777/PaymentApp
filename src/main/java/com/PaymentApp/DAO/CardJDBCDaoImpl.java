@@ -19,7 +19,10 @@ public class CardJDBCDaoImpl implements CardDAO {
     private static final String INSERT_NEW_CARD = "INSERT INTO card (card_name, card_number, balance, user_id) VALUES (?, ?, ?, ?);";
     private static final String FIND_ALL_CARDS = "SELECT id, card_number, card_name, balance, card_status, user_id FROM card WHERE user_id=(?);";
     private static final String UPDATE_CARD_BALANCE = "UPDATE card SET card.balance = card.balance + (?) WHERE id=(?);";
-
+    private static final String GET_CARD_BALANCE = "SELECT balance FROM card WHERE card_number=(?);";
+    private static final String FIND_CARD = "SELECT card_number FROM card WHERE card_number=(?);";
+    private static final String GET_CARD_ID = "SELECT id FROM card WHERE card_number=(?);";
+    private static final String DECREASE_CARD_BALANCE = "UPDATE card SET card.balance = card.balance - (?) WHERE id=(?);";
     private static CardJDBCDaoImpl cardJDBCDaoImpl;
 
     public CardJDBCDaoImpl() {
@@ -109,6 +112,7 @@ public class CardJDBCDaoImpl implements CardDAO {
         return cards;
     }
 
+    @Override
     public int updateBalance(Integer id, BigDecimal value) throws SQLException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -133,6 +137,118 @@ public class CardJDBCDaoImpl implements CardDAO {
         return result;
     }
 
+    public int decreaseBalance(Integer id, BigDecimal value) throws SQLException {
+        PreparedStatement preparedStatement = null;
+        Connection connection = null;
+        CardJDBCDaoImpl cardJDBCDaoImpl = CardJDBCDaoImpl.getInstance();
+        int result = 0;
+        try {
+            connection = cardJDBCDaoImpl.getConnection();
+            preparedStatement = connection.prepareStatement(DECREASE_CARD_BALANCE);
+            preparedStatement.setBigDecimal(1, value);
+            preparedStatement.setInt(2, id);
+            result = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public BigDecimal getCardBalance(Card card) throws SQLException {
+        BigDecimal result = new BigDecimal(-1);
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet rs = null;
+        CardJDBCDaoImpl cardJDBCDaoImpl = CardJDBCDaoImpl.getInstance();
+        try {
+            connection = cardJDBCDaoImpl.getConnection();
+            preparedStatement = connection.prepareStatement(GET_CARD_BALANCE);
+            preparedStatement.setString(1, card.getNumber());
+            rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                result = rs.getBigDecimal("balance");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        }
+        return result;
+    }
+
+    public boolean findCard(String number) throws SQLException {
+        boolean result = false;
+        ResultSet rs = null;
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = cardJDBCDaoImpl.getConnection();
+            preparedStatement = connection.prepareStatement(FIND_CARD);
+            preparedStatement.setString(1, number);
+            rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                result = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        }
+        return result;
+    }
+
+    public int getCardId(String number) throws SQLException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet rs = null;
+        try {
+            connection = cardJDBCDaoImpl.getConnection();
+            preparedStatement = connection.prepareStatement(GET_CARD_ID);
+            preparedStatement.setString(1, number);
+            rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                return (rs.getInt("id"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        }
+        return -1;
+    }
+
     public static String randomCardNumber() {
         BigInteger maxLimit = new BigInteger("9999999999999999");
         BigInteger minLimit = new BigInteger("1000000000000000");
@@ -149,6 +265,6 @@ public class CardJDBCDaoImpl implements CardDAO {
 
     public static void main(String[] args) throws SQLException {
         cardJDBCDaoImpl = CardJDBCDaoImpl.getInstance();
-        System.out.println(cardJDBCDaoImpl.updateBalance(3, new BigDecimal("20.23")));
+        System.out.println(cardJDBCDaoImpl.getCardId("1234123412341234"));
     }
 }

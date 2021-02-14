@@ -13,4 +13,8 @@ public interface CardDAO {
     List<Card> findAllCards(User user) throws SQLException;
 
     int updateBalance(Integer id, BigDecimal value) throws SQLException;
+
+    BigDecimal getCardBalance(Card card) throws SQLException;
+
+    boolean findCard(String number) throws SQLException;
 }

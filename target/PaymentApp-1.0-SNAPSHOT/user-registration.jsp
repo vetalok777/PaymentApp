@@ -6,7 +6,7 @@
 </head>
 <body>
 <div align="center">
-    <h1>User Register Form</h1>
+    <h1>Registration</h1>
     <form action="<%= request.getContextPath() %>/SignUp" method="post">
         <table style="width: 30%">
             <tr>
