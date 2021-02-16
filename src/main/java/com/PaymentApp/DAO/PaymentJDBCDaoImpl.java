@@ -28,6 +28,20 @@ public class PaymentJDBCDaoImpl implements PaymentDAO {
             "where user.id = ?\n" +
             ";";
     private static final String UPDATE_PAYMENT_STATUS = "UPDATE payment SET payment.payment_status = (?)  WHERE id=(?);";
+    private static final String GET_NUMBER_OF_ROWS = "select count(payment.id)\n" +
+            "from payment inner join card \n" +
+            "on sender_id = card.id\n" +
+            "where user_id = (?);";
+
+    private static final String GET_ALL_PAYMENTS_RECORDS = "(select payment.id, amount, creation_date, payment_status, s.card_number, r.card_number\n" +
+            "from payment  inner join card as s\n" +
+            "on payment.sender_id = s.id\n" +
+            "inner join card as r\n" +
+            "on payment.receiver_id = r.id\n" +
+            "inner join user\n" +
+            "on s.user_id = user.id\n" +
+            "where user.id = (?))  LIMIT ?, ? ";
+
     private static PaymentJDBCDaoImpl paymentJDBCDaoImpl;
 
     public PaymentJDBCDaoImpl() {
@@ -139,10 +153,85 @@ public class PaymentJDBCDaoImpl implements PaymentDAO {
         return result;
     }
 
+    public Integer getNumberOfRows(Integer userId) throws SQLException {
+        Integer numOfRows = 0;
+        ResultSet rs = null;
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        PaymentJDBCDaoImpl paymentJDBCDaoImpl = PaymentJDBCDaoImpl.getInstance();
+        try {
+            connection = paymentJDBCDaoImpl.getConnection();
+            preparedStatement = connection.prepareStatement(GET_NUMBER_OF_ROWS);
+            preparedStatement.setInt(1, userId);
+            rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                numOfRows = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        }
+        return numOfRows;
+    }
+
+    public List<PaymentDTO> getPaymentsRecords(User user, int currentPage, int recordsPerPage, String str) throws SQLException {
+        List<PaymentDTO> payments = new ArrayList<>();
+        int start = currentPage * recordsPerPage - recordsPerPage;
+        ResultSet rs = null;
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = paymentJDBCDaoImpl.getConnection();
+            preparedStatement = connection.prepareStatement("(select payment.id, amount, creation_date, payment_status, s.card_number, r.card_number\n" +
+                    "from payment  inner join card as s\n" +
+                    "on payment.sender_id = s.id\n" +
+                    "inner join card as r\n" +
+                    "on payment.receiver_id = r.id\n" +
+                    "inner join user\n" +
+                    "on s.user_id = user.id\n" +
+                    "where user.id = (?))" + str + "  LIMIT ?, ? ");
+            preparedStatement.setInt(1, user.getId());
+            preparedStatement.setInt(2, start);
+            preparedStatement.setInt(3, recordsPerPage);
+
+            rs = preparedStatement.executeQuery();
+
+            while (rs.next()) {
+                Integer id = rs.getInt("id");
+                BigDecimal amount = rs.getBigDecimal("amount");
+                LocalDateTime date = LocalDateTime.parse(rs.getString("creation_date"), DateTimeFormatter.ofPattern("yyyy-M-d HH':'mm':'ss.SSSSSS"));
+                String status = rs.getString("payment_status");
+                String sender = rs.getString("s.card_number");
+                String receiver = rs.getString("r.card_number");
+                PaymentDTO payment = new PaymentDTO(id, amount, date, status, sender, receiver);
+                payments.add(payment);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        }
+        return payments;
+    }
+
     public static void main(String[] args) throws SQLException {
-        User user = UserJDBCDaoImpl.getInstance().findUser("vetalok777@gmail.com");
-        paymentJDBCDaoImpl = PaymentJDBCDaoImpl.getInstance();
-        System.out.println(paymentJDBCDaoImpl.findAllPayments(user));
     }
 }
 

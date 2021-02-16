@@ -29,8 +29,19 @@ public class PaymentActionServlet extends HttpServlet {
                 PaymentJDBCDaoImpl.getInstance().updatePaymentStatus(newStatus, Integer.valueOf(req.getParameter("id")));
                 CardJDBCDaoImpl.getInstance().
                         updateBalance(receiver, new BigDecimal(req.getParameter("amount")));
-                RequestDispatcher requestDispatcher = req.getRequestDispatcher("/PaymentDetails");
-                requestDispatcher.forward(req, resp);
+                resp.sendRedirect("PaymentDetails?currentPage=1&sorting=byStatus");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        if (req.getParameter("status").equals("cancel")) {
+            String newStatus = "canceled";
+            try {
+                Integer sender = (CardJDBCDaoImpl.getInstance().getCardId(req.getParameter("senderCard")));
+                PaymentJDBCDaoImpl.getInstance().updatePaymentStatus(newStatus, Integer.valueOf(req.getParameter("id")));
+                CardJDBCDaoImpl.getInstance().
+                        updateBalance(sender, new BigDecimal(req.getParameter("amount")));
+                resp.sendRedirect("PaymentDetails?currentPage=1&sorting=byStatus");
             } catch (SQLException e) {
                 e.printStackTrace();
             }

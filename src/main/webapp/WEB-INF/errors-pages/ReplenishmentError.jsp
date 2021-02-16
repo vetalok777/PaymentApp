@@ -5,7 +5,10 @@
     <title>ReplenishmentError</title>
 </head>
 <body>
-<h1>Your card is blocked.</h1>
-<a href="/PaymentApp/user-home.jsp"></a>
+<h1>Card is blocked.</h1>
+<form action="${pageContext.request.contextPath}/HomePage" method="post">
+    <input type="submit" value="Back">
+</form>
+
 </body>
 </html>

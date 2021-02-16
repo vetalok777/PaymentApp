@@ -32,8 +32,20 @@ public class CheckAdminFilter implements Filter {
         PrintWriter out = response.getWriter();
         HttpSession session = request.getSession();
         try {
+            System.out.println(login + " " + password);
+            if (login == null || password == null) {
+                out.print(" <style>\n" +
+                        "   .colortext {\n" +
+                        "     color: red; \n" +
+                        "   }\n" +
+                        "  </style>" +
+                        "<p> <span class=\"colortext\">Invalid username or password!!! \n" +
+                        " </span> \n" +
+                        "  </p>");
+                RequestDispatcher dispatcher = servletRequest.getRequestDispatcher("/authorization.jsp");
+                dispatcher.include(servletRequest, servletResponse);
+            }
             Admin admin = adminJDBCDaoImpl.findAdmin(login);
-
             if (login.equals(admin.getLogin())) {
                 if (password.equals(admin.getPassword())) {
                     session.setAttribute("username", login);

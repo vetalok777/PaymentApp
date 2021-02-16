@@ -18,10 +18,11 @@
     <input type="submit" value="LogOut">
 </form>
 
-<form action="PaymentDetails" method="post">
-    <input type="submit" value="Your payments">
+<form action="PaymentDetails">
+    <input type="hidden" name="currentPage" value="1">
+    <input type="hidden" name="sorting" value="byStatus">
+    <input type="submit" value="My payments">
 </form>
-
 <form action="${pageContext.request.contextPath}/HomePage" method="post">
     <input type="submit" value="Home">
 </form>
@@ -34,7 +35,7 @@
     <p>
         <select name="number">
             <c:forEach items="${cards}" var="card">
-                <option value="${card.number}">${card.number}</option>
+                <option value="${card.number}">${card.number} (${card.balance}UAH)</option>
             </c:forEach>
         </select>
         <br/>
@@ -43,7 +44,6 @@
 
     <p>Receiver card</p>
     <input type="text" name="receiver"/> <br>
-
     <input type="submit" value="Submit"/>
 </form>
 

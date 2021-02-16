@@ -24,6 +24,9 @@ public class CardJDBCDaoImpl implements CardDAO {
     private static final String GET_CARD_ID = "SELECT id FROM card WHERE card_number=(?);";
     private static final String DECREASE_CARD_BALANCE = "UPDATE card SET card.balance = card.balance - (?) WHERE id=(?);";
     private static CardJDBCDaoImpl cardJDBCDaoImpl;
+    private static final String FIND_CARD_BY_NAME = "SELECT card_name FROM card WHERE (card_name=? AND user_id=?);";
+    private static final String GET_CARD_STATUS = "SELECT card_status FROM card WHERE card_number=(?);";
+    private static final String BLOCK_CARD = "UPDATE card SET card.card_status = 0 WHERE id=(?);";
 
     public CardJDBCDaoImpl() {
         try {
@@ -221,6 +224,36 @@ public class CardJDBCDaoImpl implements CardDAO {
         return result;
     }
 
+    public boolean findCardByName(String name, User user) throws SQLException {
+        boolean result = false;
+        ResultSet rs = null;
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = cardJDBCDaoImpl.getConnection();
+            preparedStatement = connection.prepareStatement(FIND_CARD_BY_NAME);
+            preparedStatement.setString(1, name);
+            preparedStatement.setInt(2, user.getId());
+            rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                result = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        }
+        return result;
+    }
+
     public int getCardId(String number) throws SQLException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -263,8 +296,64 @@ public class CardJDBCDaoImpl implements CardDAO {
         return res.toString();
     }
 
+    public Integer getCardStatus(Card card) throws SQLException {
+        Integer result = 0;
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet rs = null;
+        CardJDBCDaoImpl cardJDBCDaoImpl = CardJDBCDaoImpl.getInstance();
+        try {
+            connection = cardJDBCDaoImpl.getConnection();
+            preparedStatement = connection.prepareStatement(GET_CARD_STATUS);
+            preparedStatement.setString(1, card.getNumber());
+            rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                result = rs.getInt("card_status");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        }
+        return result;
+    }
+
+    public int blockCardById(Integer cardId) throws SQLException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        int result = 0;
+        CardJDBCDaoImpl cardJDBCDaoImpl = CardJDBCDaoImpl.getInstance();
+
+        try {
+            connection = cardJDBCDaoImpl.getConnection();
+            preparedStatement = connection.prepareStatement(BLOCK_CARD);
+            preparedStatement.setInt(1, cardId);
+            result = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        }
+        return result;
+    }
+
+
     public static void main(String[] args) throws SQLException {
         cardJDBCDaoImpl = CardJDBCDaoImpl.getInstance();
-        System.out.println(cardJDBCDaoImpl.getCardId("1234123412341234"));
+        Card card = new Card("9393190501993334");
+        System.out.println(cardJDBCDaoImpl.blockCardById(13));
     }
 }

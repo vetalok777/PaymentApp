@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -29,9 +28,20 @@ public class PaymentServlet extends HttpServlet {
         BigDecimal amount = new BigDecimal(req.getParameter("amount"));
         String number = req.getParameter("number");
         String receiver = req.getParameter("receiver");
-        Card card = new Card(number);
+        Card cardSender = new Card(number);
+        Card cardReceiver = new Card(receiver);
         try {
-            BigDecimal balance = CardJDBCDaoImpl.getInstance().getCardBalance(card);
+            if (CardJDBCDaoImpl.getInstance().getCardStatus(cardSender) < 1) {
+                RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/errors-pages/ReplenishmentError.jsp");
+                requestDispatcher.forward(req, resp);
+            }
+            if(CardJDBCDaoImpl.getInstance().getCardStatus(cardReceiver) < 1) {
+                RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/errors-pages/ReplenishmentError2.jsp");
+                requestDispatcher.forward(req, resp);
+            }
+
+            BigDecimal balance = CardJDBCDaoImpl.getInstance().getCardBalance(cardSender);
+
             if (amount.compareTo(balance) <= 0) {
                 if (CardJDBCDaoImpl.getInstance().findCard(receiver)) {
                     if ((number.equals(receiver))) {

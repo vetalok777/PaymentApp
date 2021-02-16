@@ -7,7 +7,7 @@
 </head>
 <body>
 <form action="<%= request.getContextPath() %>/Replenishment" method="post">
-    <h1>Type sum you want to top-up</h1>
+    <h1>Type sum you want to deposit</h1>
     <input type="text" name="sum"/>
     <input type="submit" value="Submit"/>
 </form>

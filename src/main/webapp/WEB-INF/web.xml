@@ -80,6 +80,26 @@
         <url-pattern>/PaymentAction</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>AddingCardServlet</servlet-name>
+        <servlet-class>com.PaymentApp.servlets.user.AddingCardServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AddingCardServlet</servlet-name>
+        <url-pattern>/AddingCard</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>BlockCard</servlet-name>
+        <servlet-class>com.PaymentApp.servlets.user.CardBlockServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>BlockCard</servlet-name>
+        <url-pattern>/CardBlock</url-pattern>
+    </servlet-mapping>
+
     <filter>
         <filter-name>CheckAdminFilter</filter-name>
         <filter-class>com.PaymentApp.filters.CheckAdminFilter</filter-class>
