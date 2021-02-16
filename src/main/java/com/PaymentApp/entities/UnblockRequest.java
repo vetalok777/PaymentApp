@@ -1,13 +1,18 @@
 package com.PaymentApp.entities;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class UnblockRequest {
     private Integer id;
     private String status;
-    private LocalDate creationDate;
+    private LocalDateTime creationDate;
     private Integer consideredByAdmin;
+    private Integer cardId;
 
+    public UnblockRequest(LocalDateTime creationDate, Integer cardId) {
+        this.creationDate = creationDate;
+        this.cardId = cardId;
+    }
 
     public Integer getId() {
         return id;
@@ -25,11 +30,11 @@ public class UnblockRequest {
         this.status = status;
     }
 
-    public LocalDate getCreationDate() {
+    public LocalDateTime getCreationDate() {
         return creationDate;
     }
 
-    public void setCreation_date(LocalDate creationDate) {
+    public void setCreation_date(LocalDateTime creationDate) {
         this.creationDate = creationDate;
     }
 
@@ -39,5 +44,13 @@ public class UnblockRequest {
 
     public void setConsideredByAdmin(Integer consideredByAdmin) {
         this.consideredByAdmin = consideredByAdmin;
+    }
+
+    public Integer getCardId() {
+        return cardId;
+    }
+
+    public void setCardId(Integer cardId) {
+        this.cardId = cardId;
     }
 }

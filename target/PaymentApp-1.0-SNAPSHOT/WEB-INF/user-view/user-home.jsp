@@ -92,6 +92,7 @@
                     <form action="CardBlock" method="post">
                         <input type="submit" value="Unblock card">
                         <input type="hidden" name="id" value="${card.id}"/>
+                        <input type="hidden" name="action" value="unblock"/>
 
                     </form>
 

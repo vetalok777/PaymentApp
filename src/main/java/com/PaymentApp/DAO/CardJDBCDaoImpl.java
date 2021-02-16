@@ -23,10 +23,12 @@ public class CardJDBCDaoImpl implements CardDAO {
     private static final String FIND_CARD = "SELECT card_number FROM card WHERE card_number=(?);";
     private static final String GET_CARD_ID = "SELECT id FROM card WHERE card_number=(?);";
     private static final String DECREASE_CARD_BALANCE = "UPDATE card SET card.balance = card.balance - (?) WHERE id=(?);";
-    private static CardJDBCDaoImpl cardJDBCDaoImpl;
+
     private static final String FIND_CARD_BY_NAME = "SELECT card_name FROM card WHERE (card_name=? AND user_id=?);";
     private static final String GET_CARD_STATUS = "SELECT card_status FROM card WHERE card_number=(?);";
     private static final String BLOCK_CARD = "UPDATE card SET card.card_status = 0 WHERE id=(?);";
+
+    private static CardJDBCDaoImpl cardJDBCDaoImpl;
 
     public CardJDBCDaoImpl() {
         try {
