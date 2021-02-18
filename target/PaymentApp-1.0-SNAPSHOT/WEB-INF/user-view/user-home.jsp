@@ -6,24 +6,43 @@
           integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
           crossorigin="anonymous">
 
-    <title>User Welcome</title>
+    <title>Home Page</title>
     <style>
-        table {
-            width: 50%;
-        }
-
-        table, th, td {
-            border: 1px solid #000000;
+        .styled-table {
             border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.9em;
+            font-family: sans-serif;
+            min-width: 400px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
         }
 
-        th, td {
-            padding: 15px;
+        .styled-table thead tr {
+            background-color: #009879;
+            color: #ffffff;
             text-align: left;
         }
 
-        inline {
-            display: inline-block;
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 15px;
+        }
+
+        .styled-table tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+
+        .styled-table tbody tr:last-of-type {
+            border-bottom: 2px solid #009879;
+        }
+
+        .styled-table tbody tr.active-row {
+            font-weight: bold;
+            color: #009879;
         }
 
     </style>
@@ -52,55 +71,70 @@
     </form>
 </div>
 
+
 <h1>Welcome,<%=request.getAttribute("login")%>
 </h1>
 
 <p>Your cards:</p>
-<c:forEach items="${cards}" var="card">
 
-    <table>
-        <tr>
-            <th>Card Name</th>
-            <th>Card Number</th>
-            <th>Card Balance</th>
-            <th>Card Status</th>
-        </tr>
-        <tr>
-            <td>${card.name}</td>
-            <td>${card.number}</td>
-            <td>${card.balance}UAH</td>
-            <td><c:out value="${card.status>=1 ? 'active': 'blocked'}"/></td>
-            <td>
-                <form action="Replenishment">
-                    <input type="submit" value="Deposit">
-                    <input type="hidden" name="id" value="${card.id}"/>
-                    <input type="hidden" name="status" value="${card.status}"/>
-                </form>
+<form action=HomePage method="post">
+    <p>Sort By </p>
+    <select name="sorting">
+        <option value="byBalance">Balance</option>
+        <option value="byNumber">Number</option>
+        <option value="byName">Name</option>
+    </select>
+    <input class="btn btn-primary btn-s" type="submit" value="OK">
+</form>
+<main class="m-3">
+    <div class="row col-md-6">
 
-                <c:if test="${card.status>=1}">
+        <table class="styled-table">
+            <tr class="active-row">
+                <th>Card Name</th>
+                <th>Card Number</th>
+                <th>Card Balance</th>
+                <th>Card Status</th>
+            </tr>
+            <c:forEach items="${cards}" var="card">
+                <tr>
+                    <td>${card.name}</td>
+                    <td>${card.number}</td>
+                    <td>${card.balance}UAH</td>
+                    <td><c:out value="${card.status>=1 ? 'active': 'blocked'}"/></td>
+                    <td>
+                        <form action="Replenishment">
+                            <input type="submit" value="Deposit">
+                            <input type="hidden" name="id" value="${card.id}"/>
+                            <input type="hidden" name="status" value="${card.status}"/>
+                        </form>
 
-                    <form action="CardBlock" method="post">
-                        <input type="submit" value="Block card">
-                        <input type="hidden" name="action" value="submit"/>
-                        <input type="hidden" name="id" value="${card.id}"/>
-                    </form>
+                        <c:if test="${card.status>=1}">
 
-                </c:if>
+                            <form action="CardBlock" method="post">
+                                <input type="submit" value="Block card">
+                                <input type="hidden" name="action" value="submit"/>
+                                <input type="hidden" name="id" value="${card.id}"/>
+                            </form>
 
-                <c:if test="${card.status<1}">
+                        </c:if>
 
-                    <form action="CardBlock" method="post">
-                        <input type="submit" value="Unblock card">
-                        <input type="hidden" name="id" value="${card.id}"/>
-                        <input type="hidden" name="action" value="unblock"/>
+                        <c:if test="${card.status<1}">
 
-                    </form>
+                            <form action="CardBlock" method="post">
+                                <input type="submit" value="Unblock card">
+                                <input type="hidden" name="id" value="${card.id}"/>
+                                <input type="hidden" name="action" value="unblock"/>
 
-                </c:if>
-            </td>
-        </tr>
-    </table>
-</c:forEach>
+                            </form>
+
+                        </c:if>
+                    </td>
+                </tr>
+            </c:forEach>
+        </table>
+    </div>
+</main>
 <br>
 
 <%

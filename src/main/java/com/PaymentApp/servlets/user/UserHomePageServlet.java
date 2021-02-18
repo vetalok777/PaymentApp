@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserHomePageServlet extends HttpServlet {
@@ -30,14 +31,26 @@ public class UserHomePageServlet extends HttpServlet {
             resp.sendRedirect("/PaymentApp/authorization.jsp");
         }
         try {
+            List<Card> cards = new ArrayList<>();
             User user = UserJDBCDaoImpl.getInstance().findUser((String) session.getAttribute("username"));
-            List<Card> cards = CardJDBCDaoImpl.getInstance().findAllCards(user);
+            if (req.getParameter("sorting") == null) {
+                String sort = "ORDER BY card_status DESC;";
+                cards = CardJDBCDaoImpl.getInstance().findAllCards(user, sort);
+            } else if (req.getParameter("sorting").equals("byNumber")) {
+                String sort = "ORDER BY card_number DESC;";
+                cards = CardJDBCDaoImpl.getInstance().findAllCards(user, sort);
+            } else if (req.getParameter("sorting").equals("byBalance")) {
+                String sort = "ORDER BY balance DESC;";
+                cards = CardJDBCDaoImpl.getInstance().findAllCards(user, sort);
+            } else if (req.getParameter("sorting").equals("byName")) {
+                String sort = "ORDER BY card_name DESC;";
+                cards = CardJDBCDaoImpl.getInstance().findAllCards(user, sort);
+            }
             req.setAttribute("cards", cards);
             req.setAttribute("login", user.getFirstName());
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/user-view/user-home.jsp");
         dispatcher.forward(req, resp);
     }

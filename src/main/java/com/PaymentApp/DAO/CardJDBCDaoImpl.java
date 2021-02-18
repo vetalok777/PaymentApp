@@ -17,7 +17,7 @@ public class CardJDBCDaoImpl implements CardDAO {
     private static final String USERNAME = "root";
     private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final String INSERT_NEW_CARD = "INSERT INTO card (card_name, card_number, balance, user_id) VALUES (?, ?, ?, ?);";
-    private static final String FIND_ALL_CARDS = "SELECT id, card_number, card_name, balance, card_status, user_id FROM card WHERE user_id=(?);";
+    private static final String FIND_ALL_CARDS = "SELECT id, card_number, card_name, balance, card_status, user_id FROM card WHERE user_id=(?)";
     private static final String UPDATE_CARD_BALANCE = "UPDATE card SET card.balance = card.balance + (?) WHERE id=(?);";
     private static final String GET_CARD_BALANCE = "SELECT balance FROM card WHERE card_number=(?);";
     private static final String FIND_CARD = "SELECT card_number FROM card WHERE card_number=(?);";
@@ -80,14 +80,14 @@ public class CardJDBCDaoImpl implements CardDAO {
     }
 
     @Override
-    public List<Card> findAllCards(User user) throws SQLException {
+    public List<Card> findAllCards(User user, String sort) throws SQLException {
         List<Card> cards = new ArrayList<>();
         ResultSet rs = null;
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
             connection = cardJDBCDaoImpl.getConnection();
-            preparedStatement = connection.prepareStatement(FIND_ALL_CARDS);
+            preparedStatement = connection.prepareStatement(FIND_ALL_CARDS + sort);
             preparedStatement.setInt(1, user.getId());
             rs = preparedStatement.executeQuery();
 

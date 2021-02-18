@@ -35,36 +35,36 @@ public class PaymentServlet extends HttpServlet {
                 RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/errors-pages/ReplenishmentError.jsp");
                 requestDispatcher.forward(req, resp);
             }
-            if(CardJDBCDaoImpl.getInstance().getCardStatus(cardReceiver) < 1) {
+            if (CardJDBCDaoImpl.getInstance().getCardStatus(cardReceiver) < 1) {
                 RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/errors-pages/ReplenishmentError2.jsp");
                 requestDispatcher.forward(req, resp);
-            }
+            } else {
+                BigDecimal balance = CardJDBCDaoImpl.getInstance().getCardBalance(cardSender);
 
-            BigDecimal balance = CardJDBCDaoImpl.getInstance().getCardBalance(cardSender);
-
-            if (amount.compareTo(balance) <= 0) {
-                if (CardJDBCDaoImpl.getInstance().findCard(receiver)) {
-                    if ((number.equals(receiver))) {
-                        RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/errors-pages/sameCard-error.jsp");
-                        dispatcher.forward(req, resp);
+                if (amount.compareTo(balance) <= 0) {
+                    if (CardJDBCDaoImpl.getInstance().findCard(receiver)) {
+                        if ((number.equals(receiver))) {
+                            RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/errors-pages/sameCard-error.jsp");
+                            dispatcher.forward(req, resp);
+                        } else {
+                            Integer senderId = CardJDBCDaoImpl.getInstance().getCardId(number);
+                            Integer receiverId = CardJDBCDaoImpl.getInstance().getCardId(receiver);
+                            CardJDBCDaoImpl.getInstance().decreaseBalance(senderId, amount);
+                            Payment payment = new Payment(amount, LocalDateTime.now(), senderId, receiverId);
+                            PaymentJDBCDaoImpl.getInstance().insertPayment(payment);
+                            RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/user-view/payment-successful.jsp");
+                            dispatcher.forward(req, resp);
+                        }
                     } else {
-                        Integer senderId = CardJDBCDaoImpl.getInstance().getCardId(number);
-                        Integer receiverId = CardJDBCDaoImpl.getInstance().getCardId(receiver);
-                        CardJDBCDaoImpl.getInstance().decreaseBalance(senderId, amount);
-                        Payment payment = new Payment(amount, LocalDateTime.now(), senderId, receiverId);
-                        PaymentJDBCDaoImpl.getInstance().insertPayment(payment);
-                        RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/user-view/payment-successful.jsp");
+                        RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/errors-pages/noCard-error.jsp");
                         dispatcher.forward(req, resp);
                     }
                 } else {
-                    RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/errors-pages/noCard-error.jsp");
+                    RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/errors-pages/not-enough.jsp");
                     dispatcher.forward(req, resp);
                 }
-            } else {
-                RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/errors-pages/not-enough.jsp");
-                dispatcher.forward(req, resp);
-            }
 
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

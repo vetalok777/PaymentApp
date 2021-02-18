@@ -10,7 +10,7 @@ import java.util.List;
 public interface CardDAO {
     int insertCard(Card card) throws SQLException;
 
-    List<Card> findAllCards(User user) throws SQLException;
+    List<Card> findAllCards(User user, String sort) throws SQLException;
 
     int updateBalance(Integer id, BigDecimal value) throws SQLException;
 

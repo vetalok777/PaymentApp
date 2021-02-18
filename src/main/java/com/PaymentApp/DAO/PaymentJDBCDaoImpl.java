@@ -1,7 +1,6 @@
 package com.PaymentApp.DAO;
 
 import com.PaymentApp.DTO.PaymentDTO;
-import com.PaymentApp.entities.Card;
 import com.PaymentApp.entities.Payment;
 import com.PaymentApp.entities.User;
 
