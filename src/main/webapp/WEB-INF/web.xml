@@ -100,6 +100,68 @@
         <url-pattern>/CardBlock</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>AdminHomePageServlet</servlet-name>
+        <servlet-class>com.PaymentApp.servlets.admin.AdminHomePageServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AdminHomePageServlet</servlet-name>
+        <url-pattern>/AdminHome</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RequestActionServlet</servlet-name>
+        <servlet-class>com.PaymentApp.servlets.admin.RequestActionServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>RequestActionServlet</servlet-name>
+        <url-pattern>/RequestAction</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet>
+        <servlet-name>UsersListServlet</servlet-name>
+        <servlet-class>com.PaymentApp.servlets.admin.UsersListServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>UsersListServlet</servlet-name>
+        <url-pattern>/Users</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>UserActionServlet</servlet-name>
+        <servlet-class>com.PaymentApp.servlets.admin.UserActionServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>UserActionServlet</servlet-name>
+        <url-pattern>/UserAction</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>UserCardsServlet</servlet-name>
+        <servlet-class>com.PaymentApp.servlets.admin.UserCardsServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>UserCardsServlet</servlet-name>
+        <url-pattern>/UserCards</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet>
+        <servlet-name>UserCardActionServlet</servlet-name>
+        <servlet-class>com.PaymentApp.servlets.admin.UserCardActionServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>UserCardActionServlet</servlet-name>
+        <url-pattern>/CardAction</url-pattern>
+    </servlet-mapping>
+
     <filter>
         <filter-name>CheckAdminFilter</filter-name>
         <filter-class>com.PaymentApp.filters.CheckAdminFilter</filter-class>

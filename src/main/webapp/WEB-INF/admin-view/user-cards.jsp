@@ -2,7 +2,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
-
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
           integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
           crossorigin="anonymous">
@@ -47,19 +46,9 @@
 
     </style>
 
-    <title>ADMIN Home</title>
-
-
+    <title>User Cards</title>
 </head>
 <body>
-<%
-    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-
-    if (session.getAttribute("username") == null) {
-        response.sendRedirect("authorization.jsp");
-    }
-
-%>
 <div class="btn-group" role="group" aria-label="Basic example">
     <form action="LogOut" method="post">
         <input class="btn btn-primary btn-sm" type="submit" value="LogOut">
@@ -72,39 +61,39 @@
     </form>
 </div>
 
-<h1>Welcome, ADMIN</h1>
-<br/>
+<div class="btn-group" role="group" aria-label="Basic example">
+    <form action="AdminHome" method="post">
+        <input class="btn btn-secondary" type="submit" value="HomePage">
+    </form>
+</div>
 
-<h1>Requests for unblocking</h1>
+<p><%=request.getAttribute("login")%> Cards</p>
+
+
 <div class="row col-md-6">
 
     <table class="styled-table">
         <tr class="active-row">
-            <th>Request ID</th>
-            <th>Request Status</th>
-            <th>Request Creation Date</th>
-            <th>Card id</th>
+            <th>Card ID</th>
+            <th>Card Status</th>
+            <th>Card Name</th>
+            <th>Card Number</th>
+            <th>Card Balance</th>
         </tr>
-        <c:forEach items="${requests}" var="request">
+        <c:forEach items="${cards}" var="card">
             <tr>
-                <td>${request.id}</td>
-                <td>${request.status}</td>
-                <td>${request.creationDate}</td>
-                <td>${request.cardId}</td>
+                <td>${card.id}</td>
+                <td>${card.status}</td>
+                <td>${card.name}</td>
+                <td>${card.number}</td>
+                <td>${card.balance}</td>
                 <td>
-                    <c:if test="${request.status=='not considered'}">
-                        <form action="RequestAction" method="post">
-                            <input type="submit" value="Unblock card">
-                            <input type="hidden" name="action" value="considered"/>
-                            <input type="hidden" name="cardId" value="${request.cardId}"/>
-                            <input type="hidden" name="Id" value="${request.id}"/>
-                        </form>
-
-                        <form action="RequestAction" method="post">
-                            <input type="submit" value="Cancel request">
-                            <input type="hidden" name="action" value="cancel"/>
-                            <input type="hidden" name="cardId" value="${request.cardId}"/>
-                            <input type="hidden" name="Id" value="${request.id}"/>
+                    <c:if test="${card.status>=1}">
+                        <form action="CardAction" method="post">
+                            <input type="submit" value="Block card">
+                            <input type="hidden" name="action" value="block"/>
+                            <input type="hidden" name="login" value="${login}"/>
+                            <input type="hidden" name="cardId" value="${card.id}"/>
                         </form>
                     </c:if>
                 </td>

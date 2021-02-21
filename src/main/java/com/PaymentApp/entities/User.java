@@ -28,6 +28,14 @@ public class User {
         this.login = login;
     }
 
+    public User(Integer id, String email, String password, String firstName, Integer status) {
+        this.id = id;
+        this.login = email;
+        this.password = password;
+        this.firstName = firstName;
+        this.status = status;
+    }
+
     public int getStatus() {
         return status;
     }

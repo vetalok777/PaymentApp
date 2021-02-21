@@ -49,8 +49,8 @@ public class CheckAdminFilter implements Filter {
             if (login.equals(admin.getLogin())) {
                 if (password.equals(admin.getPassword())) {
                     session.setAttribute("username", login);
-                    String html = "/WEB-INF/admin-view/admin-home.jsp";
-                    RequestDispatcher dispatcher = request.getRequestDispatcher(html);
+                    String str = "/AdminHome";
+                    RequestDispatcher dispatcher = request.getRequestDispatcher(str);
                     dispatcher.forward(request, response);
                 } else {
                     out.print("Invalid password for ADMIN!!!");

@@ -14,6 +14,13 @@ public class UnblockRequest {
         this.cardId = cardId;
     }
 
+    public UnblockRequest(Integer id, String status, LocalDateTime date, Integer cardId) {
+        this.id = id;
+        this.status = status;
+        this.creationDate = date;
+        this.cardId = cardId;
+    }
+
     public Integer getId() {
         return id;
     }
@@ -52,5 +59,15 @@ public class UnblockRequest {
 
     public void setCardId(Integer cardId) {
         this.cardId = cardId;
+    }
+
+    @Override
+    public String toString() {
+        return "UnblockRequest{" +
+                "id=" + id +
+                ", status='" + status + '\'' +
+                ", creationDate=" + creationDate +
+                ", cardId=" + cardId +
+                '}';
     }
 }

@@ -27,7 +27,7 @@ public class CardJDBCDaoImpl implements CardDAO {
     private static final String FIND_CARD_BY_NAME = "SELECT card_name FROM card WHERE (card_name=? AND user_id=?);";
     private static final String GET_CARD_STATUS = "SELECT card_status FROM card WHERE card_number=(?);";
     private static final String BLOCK_CARD = "UPDATE card SET card.card_status = 0 WHERE id=(?);";
-
+    private static final String UPDATE_CARD_STATUS = "UPDATE card SET card.card_status = 1 WHERE id=(?);";
     private static CardJDBCDaoImpl cardJDBCDaoImpl;
 
     public CardJDBCDaoImpl() {
@@ -142,6 +142,7 @@ public class CardJDBCDaoImpl implements CardDAO {
         return result;
     }
 
+    @Override
     public int decreaseBalance(Integer id, BigDecimal value) throws SQLException {
         PreparedStatement preparedStatement = null;
         Connection connection = null;
@@ -197,6 +198,7 @@ public class CardJDBCDaoImpl implements CardDAO {
         return result;
     }
 
+    @Override
     public boolean findCard(String number) throws SQLException {
         boolean result = false;
         ResultSet rs = null;
@@ -226,6 +228,7 @@ public class CardJDBCDaoImpl implements CardDAO {
         return result;
     }
 
+    @Override
     public boolean findCardByName(String name, User user) throws SQLException {
         boolean result = false;
         ResultSet rs = null;
@@ -256,6 +259,7 @@ public class CardJDBCDaoImpl implements CardDAO {
         return result;
     }
 
+    @Override
     public int getCardId(String number) throws SQLException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -284,22 +288,10 @@ public class CardJDBCDaoImpl implements CardDAO {
         return -1;
     }
 
-    public static String randomCardNumber() {
-        BigInteger maxLimit = new BigInteger("9999999999999999");
-        BigInteger minLimit = new BigInteger("1000000000000000");
-        BigInteger bigInteger = maxLimit.subtract(minLimit);
-        Random randNum = new Random();
-        int len = maxLimit.bitLength();
-        BigInteger res = new BigInteger(len, randNum);
-        if (res.compareTo(minLimit) < 0)
-            res = res.add(minLimit);
-        if (res.compareTo(bigInteger) >= 0)
-            res = res.mod(bigInteger).add(minLimit);
-        return res.toString();
-    }
 
+    @Override
     public Integer getCardStatus(Card card) throws SQLException {
-        Integer result = 0;
+        int result = 0;
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet rs = null;
@@ -328,6 +320,7 @@ public class CardJDBCDaoImpl implements CardDAO {
         return result;
     }
 
+    @Override
     public int blockCardById(Integer cardId) throws SQLException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -352,10 +345,43 @@ public class CardJDBCDaoImpl implements CardDAO {
         return result;
     }
 
-
-    public static void main(String[] args) throws SQLException {
-        cardJDBCDaoImpl = CardJDBCDaoImpl.getInstance();
-        Card card = new Card("9393190501993334");
-        System.out.println(cardJDBCDaoImpl.blockCardById(13));
+    @Override
+    public int changeCardStatus(Integer cardId) throws SQLException {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        CardJDBCDaoImpl cardJDBCDaoImpl = CardJDBCDaoImpl.getInstance();
+        int result = 0;
+        try {
+            connection = cardJDBCDaoImpl.getConnection();
+            preparedStatement = connection.prepareStatement(UPDATE_CARD_STATUS);
+            preparedStatement.setInt(1, cardId);
+            result = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        }
+        return result;
     }
+
+    public static String randomCardNumber() {
+        BigInteger maxLimit = new BigInteger("9999999999999999");
+        BigInteger minLimit = new BigInteger("1000000000000000");
+        BigInteger bigInteger = maxLimit.subtract(minLimit);
+        Random randNum = new Random();
+        int len = maxLimit.bitLength();
+        BigInteger res = new BigInteger(len, randNum);
+        if (res.compareTo(minLimit) < 0)
+            res = res.add(minLimit);
+        if (res.compareTo(bigInteger) >= 0)
+            res = res.mod(bigInteger).add(minLimit);
+        return res.toString();
+    }
+
+
 }

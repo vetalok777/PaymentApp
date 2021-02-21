@@ -48,7 +48,7 @@ public class PaymentsDetailsServlet extends HttpServlet {
             }
 
             if (sorting.equals("byNumber")) {
-                String byDateOld = "ORDER BY sender_id ASC";
+                String byDateOld = "ORDER BY sender_id DESC";
                 payments = PaymentJDBCDaoImpl.getInstance().getPaymentsRecords(user, currentPage, total, byDateOld);
                 req.setAttribute("payments", payments);
             }

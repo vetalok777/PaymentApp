@@ -32,14 +32,6 @@ public class PaymentJDBCDaoImpl implements PaymentDAO {
             "on sender_id = card.id\n" +
             "where user_id = (?);";
 
-    private static final String GET_ALL_PAYMENTS_RECORDS = "(select payment.id, amount, creation_date, payment_status, s.card_number, r.card_number\n" +
-            "from payment  inner join card as s\n" +
-            "on payment.sender_id = s.id\n" +
-            "inner join card as r\n" +
-            "on payment.receiver_id = r.id\n" +
-            "inner join user\n" +
-            "on s.user_id = user.id\n" +
-            "where user.id = (?))  LIMIT ?, ? ";
 
     private static PaymentJDBCDaoImpl paymentJDBCDaoImpl;
 
@@ -63,7 +55,7 @@ public class PaymentJDBCDaoImpl implements PaymentDAO {
         return DriverManager.getConnection(URL, USERNAME, PASSWORD);
     }
 
-
+@Override
     public int insertPayment(Payment payment) throws SQLException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -127,7 +119,7 @@ public class PaymentJDBCDaoImpl implements PaymentDAO {
         }
         return payments;
     }
-
+@Override
     public int updatePaymentStatus(String status, Integer id) throws SQLException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -151,9 +143,9 @@ public class PaymentJDBCDaoImpl implements PaymentDAO {
         }
         return result;
     }
-
+@Override
     public Integer getNumberOfRows(Integer userId) throws SQLException {
-        Integer numOfRows = 0;
+        int numOfRows = 0;
         ResultSet rs = null;
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -181,7 +173,7 @@ public class PaymentJDBCDaoImpl implements PaymentDAO {
         }
         return numOfRows;
     }
-
+@Override
     public List<PaymentDTO> getPaymentsRecords(User user, int currentPage, int recordsPerPage, String str) throws SQLException {
         List<PaymentDTO> payments = new ArrayList<>();
         int start = currentPage * recordsPerPage - recordsPerPage;
@@ -230,8 +222,7 @@ public class PaymentJDBCDaoImpl implements PaymentDAO {
         return payments;
     }
 
-    public static void main(String[] args) throws SQLException {
-    }
+
 }
 
 
