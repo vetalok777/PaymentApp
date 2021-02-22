@@ -3,6 +3,10 @@ package com.PaymentApp.DAO;
 import com.PaymentApp.entities.Card;
 import com.PaymentApp.entities.User;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.*;
@@ -47,7 +51,37 @@ public class CardJDBCDaoImpl implements CardDAO {
     }
 
     public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USERNAME, PASSWORD);
+        Connection connection = null;
+        try {
+            Context initContext = new InitialContext();
+            Context envContext = (Context) initContext.lookup("java:/comp/env");
+
+
+            DataSource ds = (DataSource) envContext.lookup("jdbc/PaymentDB");
+            connection = ds.getConnection();
+        } catch (NamingException ex) {
+            ex.printStackTrace();
+        }
+        return connection;
+    }
+
+
+    public void commitAndClose(Connection con) {
+        try {
+            con.commit();
+            con.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void rollbackAndClose(Connection con) {
+        try {
+            con.rollback();
+            con.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 
 
@@ -67,14 +101,10 @@ public class CardJDBCDaoImpl implements CardDAO {
             result = preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
+            cardJDBCDaoImpl.rollbackAndClose(connection);
             e.printStackTrace();
         } finally {
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            cardJDBCDaoImpl.commitAndClose(connection);
         }
         return result;
     }
@@ -102,17 +132,12 @@ public class CardJDBCDaoImpl implements CardDAO {
                 cards.add(card);
             }
         } catch (SQLException e) {
+            assert connection != null;
+            cardJDBCDaoImpl.rollbackAndClose(connection);
             e.printStackTrace();
         } finally {
-            if (rs != null) {
-                rs.close();
-            }
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            assert connection != null;
+            cardJDBCDaoImpl.commitAndClose(connection);
         }
         return cards;
     }
@@ -130,14 +155,12 @@ public class CardJDBCDaoImpl implements CardDAO {
             preparedStatement.setInt(2, id);
             result = preparedStatement.executeUpdate();
         } catch (SQLException e) {
+            assert connection != null;
+            cardJDBCDaoImpl.rollbackAndClose(connection);
             e.printStackTrace();
         } finally {
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            assert connection != null;
+            cardJDBCDaoImpl.commitAndClose(connection);
         }
         return result;
     }
@@ -155,14 +178,12 @@ public class CardJDBCDaoImpl implements CardDAO {
             preparedStatement.setInt(2, id);
             result = preparedStatement.executeUpdate();
         } catch (SQLException e) {
+            assert connection != null;
+            cardJDBCDaoImpl.rollbackAndClose(connection);
             e.printStackTrace();
         } finally {
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            assert connection != null;
+            cardJDBCDaoImpl.commitAndClose(connection);
         }
         return result;
     }
@@ -183,17 +204,12 @@ public class CardJDBCDaoImpl implements CardDAO {
                 result = rs.getBigDecimal("balance");
             }
         } catch (SQLException e) {
+            assert connection != null;
+            cardJDBCDaoImpl.rollbackAndClose(connection);
             e.printStackTrace();
         } finally {
-            if (rs != null) {
-                rs.close();
-            }
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            assert connection != null;
+            cardJDBCDaoImpl.commitAndClose(connection);
         }
         return result;
     }
@@ -213,17 +229,12 @@ public class CardJDBCDaoImpl implements CardDAO {
                 result = true;
             }
         } catch (SQLException e) {
+            assert connection != null;
+            cardJDBCDaoImpl.rollbackAndClose(connection);
             e.printStackTrace();
         } finally {
-            if (rs != null) {
-                rs.close();
-            }
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            assert connection != null;
+            cardJDBCDaoImpl.commitAndClose(connection);
         }
         return result;
     }
@@ -244,17 +255,12 @@ public class CardJDBCDaoImpl implements CardDAO {
                 result = true;
             }
         } catch (SQLException e) {
+            assert connection != null;
+            cardJDBCDaoImpl.rollbackAndClose(connection);
             e.printStackTrace();
         } finally {
-            if (rs != null) {
-                rs.close();
-            }
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            assert connection != null;
+            cardJDBCDaoImpl.commitAndClose(connection);
         }
         return result;
     }
@@ -273,17 +279,12 @@ public class CardJDBCDaoImpl implements CardDAO {
                 return (rs.getInt("id"));
             }
         } catch (SQLException e) {
+            assert connection != null;
+            cardJDBCDaoImpl.rollbackAndClose(connection);
             e.printStackTrace();
         } finally {
-            if (rs != null) {
-                rs.close();
-            }
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            assert connection != null;
+            cardJDBCDaoImpl.commitAndClose(connection);
         }
         return -1;
     }
@@ -305,17 +306,12 @@ public class CardJDBCDaoImpl implements CardDAO {
                 result = rs.getInt("card_status");
             }
         } catch (SQLException e) {
+            assert connection != null;
+            cardJDBCDaoImpl.rollbackAndClose(connection);
             e.printStackTrace();
         } finally {
-            if (rs != null) {
-                rs.close();
-            }
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            assert connection != null;
+            cardJDBCDaoImpl.commitAndClose(connection);
         }
         return result;
     }
@@ -333,14 +329,12 @@ public class CardJDBCDaoImpl implements CardDAO {
             preparedStatement.setInt(1, cardId);
             result = preparedStatement.executeUpdate();
         } catch (SQLException e) {
+            assert connection != null;
+            cardJDBCDaoImpl.rollbackAndClose(connection);
             e.printStackTrace();
         } finally {
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            assert connection != null;
+            cardJDBCDaoImpl.commitAndClose(connection);
         }
         return result;
     }
@@ -357,14 +351,12 @@ public class CardJDBCDaoImpl implements CardDAO {
             preparedStatement.setInt(1, cardId);
             result = preparedStatement.executeUpdate();
         } catch (SQLException e) {
+            assert connection != null;
+            cardJDBCDaoImpl.rollbackAndClose(connection);
             e.printStackTrace();
         } finally {
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            assert connection != null;
+            cardJDBCDaoImpl.commitAndClose(connection);
         }
         return result;
     }

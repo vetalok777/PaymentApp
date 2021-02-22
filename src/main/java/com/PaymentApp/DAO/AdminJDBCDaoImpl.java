@@ -3,6 +3,10 @@ package com.PaymentApp.DAO;
 import com.PaymentApp.entities.Admin;
 import com.PaymentApp.entities.User;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 import java.sql.*;
 
 public class AdminJDBCDaoImpl implements AdminDAO {
@@ -27,7 +31,39 @@ public class AdminJDBCDaoImpl implements AdminDAO {
         return adminJDBCDaoImpl;
     }
 
+    public Connection getConnection() throws SQLException {
+        Connection con = null;
+        try {
+            Context initContext = new InitialContext();
+            Context envContext = (Context) initContext.lookup("java:/comp/env");
 
+
+            DataSource ds = (DataSource) envContext.lookup("jdbc/PaymentDB");
+            con = ds.getConnection();
+        } catch (NamingException ex) {
+            ex.printStackTrace();
+        }
+        return con;
+    }
+
+
+    public void commitAndClose(Connection con) {
+        try {
+            con.commit();
+            con.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void rollbackAndClose(Connection con) {
+        try {
+            con.rollback();
+            con.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
 
     @Override
     public Admin findAdmin(String login) throws SQLException {
@@ -36,7 +72,7 @@ public class AdminJDBCDaoImpl implements AdminDAO {
         PreparedStatement preparedStatement = null;
         ResultSet rs = null;
         try {
-            connection = DBManager.getInstance().getConnection();
+            connection = AdminJDBCDaoImpl.getInstance().getConnection();
             preparedStatement = connection.prepareStatement(FIND_ADMIN);
             preparedStatement.setString(1, login);
             rs = preparedStatement.executeQuery();
@@ -46,24 +82,13 @@ public class AdminJDBCDaoImpl implements AdminDAO {
                 admin.setId(rs.getInt("id"));
             }
         } catch (SQLException e) {
-            DBManager.getInstance().rollbackAndClose(connection);
             e.printStackTrace();
+            AdminJDBCDaoImpl.getInstance().rollbackAndClose(connection);
         } finally {
-            if (rs != null) {
-                rs.close();
-            }
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-        DBManager.getInstance().commitAndClose(connection);
+            assert connection != null;
+            AdminJDBCDaoImpl.getInstance().commitAndClose(connection);
         }
         return admin;
     }
 
-
-    public static void main(String[] args) throws SQLException {
-        AdminJDBCDaoImpl adminJDBCDaoImpl = AdminJDBCDaoImpl.getInstance();
-        String name = "admin";
-        System.out.println(adminJDBCDaoImpl.findAdmin("name").toString());
-    }
 }

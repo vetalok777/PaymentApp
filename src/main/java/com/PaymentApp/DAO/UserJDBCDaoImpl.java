@@ -3,6 +3,10 @@ package com.PaymentApp.DAO;
 import com.PaymentApp.entities.UnblockRequest;
 import com.PaymentApp.entities.User;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -39,7 +43,37 @@ public class UserJDBCDaoImpl implements UserDAO {
     }
 
     public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USERNAME, PASSWORD);
+        Connection connection = null;
+        try {
+            Context initContext = new InitialContext();
+            Context envContext = (Context) initContext.lookup("java:/comp/env");
+
+
+            DataSource ds = (DataSource) envContext.lookup("jdbc/PaymentDB");
+            connection = ds.getConnection();
+        } catch (NamingException ex) {
+            ex.printStackTrace();
+        }
+        return connection;
+    }
+
+
+    public void commitAndClose(Connection con) {
+        try {
+            con.commit();
+            con.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void rollbackAndClose(Connection con) {
+        try {
+            con.rollback();
+            con.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override
@@ -57,14 +91,12 @@ public class UserJDBCDaoImpl implements UserDAO {
             result = preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
+            assert connection != null;
+            userJDBCDaoImpl.rollbackAndClose(connection);
             e.printStackTrace();
         } finally {
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            assert connection != null;
+            userJDBCDaoImpl.commitAndClose(connection);
         }
         return result;
     }
@@ -84,17 +116,12 @@ public class UserJDBCDaoImpl implements UserDAO {
                 result = rs.getString(1);
             }
         } catch (SQLException e) {
+            assert connection != null;
+            userJDBCDaoImpl.rollbackAndClose(connection);
             e.printStackTrace();
         } finally {
-            if (rs != null) {
-                rs.close();
-            }
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            assert connection != null;
+            userJDBCDaoImpl.commitAndClose(connection);
         }
         return result;
     }
@@ -118,17 +145,12 @@ public class UserJDBCDaoImpl implements UserDAO {
                 user.setStatus(rs.getInt("user_status"));
             }
         } catch (SQLException e) {
+            assert connection != null;
+            userJDBCDaoImpl.rollbackAndClose(connection);
             e.printStackTrace();
         } finally {
-            if (rs != null) {
-                rs.close();
-            }
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            assert connection != null;
+            userJDBCDaoImpl.commitAndClose(connection);
         }
         return user;
     }
@@ -154,17 +176,12 @@ public class UserJDBCDaoImpl implements UserDAO {
                 users.add(user);
             }
         } catch (SQLException e) {
+            assert connection != null;
+            userJDBCDaoImpl.rollbackAndClose(connection);
             e.printStackTrace();
         } finally {
-            if (rs != null) {
-                rs.close();
-            }
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            assert connection != null;
+            userJDBCDaoImpl.commitAndClose(connection);
         }
         return users;
     }
@@ -181,14 +198,12 @@ public class UserJDBCDaoImpl implements UserDAO {
             preparedStatement.setInt(2, id);
             result = preparedStatement.executeUpdate();
         } catch (SQLException e) {
+            assert connection != null;
+            userJDBCDaoImpl.rollbackAndClose(connection);
             e.printStackTrace();
         } finally {
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            assert connection != null;
+            userJDBCDaoImpl.commitAndClose(connection);
         }
         return result;
     }

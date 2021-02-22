@@ -3,7 +3,11 @@ package com.PaymentApp.DAO;
 import com.PaymentApp.entities.Card;
 import com.PaymentApp.entities.UnblockRequest;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
+import javax.sql.DataSource;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -40,7 +44,37 @@ public class UnblockRequestDAOImpl implements UnblockRequestDAO {
     }
 
     public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USERNAME, PASSWORD);
+        Connection connection = null;
+        try {
+            Context initContext = new InitialContext();
+            Context envContext = (Context) initContext.lookup("java:/comp/env");
+
+
+            DataSource ds = (DataSource) envContext.lookup("jdbc/PaymentDB");
+            connection = ds.getConnection();
+        } catch (NamingException ex) {
+            ex.printStackTrace();
+        }
+        return connection;
+    }
+
+
+    public void commitAndClose(Connection con) {
+        try {
+            con.commit();
+            con.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void rollbackAndClose(Connection con) {
+        try {
+            con.rollback();
+            con.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override
@@ -56,14 +90,12 @@ public class UnblockRequestDAOImpl implements UnblockRequestDAO {
             preparedStatement.setInt(2, unblockRequest.getCardId());
             result = preparedStatement.executeUpdate();
         } catch (SQLException e) {
+            assert connection != null;
+            unblockRequestDAO.rollbackAndClose(connection);
             e.printStackTrace();
         } finally {
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            assert connection != null;
+            unblockRequestDAO.commitAndClose(connection);
         }
         return result;
     }
@@ -84,17 +116,12 @@ public class UnblockRequestDAOImpl implements UnblockRequestDAO {
                 result = 1;
             }
         } catch (SQLException e) {
+            assert connection != null;
+            unblockRequestDAO.rollbackAndClose(connection);
             e.printStackTrace();
         } finally {
-            if (rs != null) {
-                rs.close();
-            }
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            assert connection != null;
+            unblockRequestDAO.commitAndClose(connection);
         }
         return result;
     }
@@ -119,17 +146,12 @@ public class UnblockRequestDAOImpl implements UnblockRequestDAO {
                 requests.add(unblockRequest);
             }
         } catch (SQLException e) {
+            assert connection != null;
+            unblockRequestDAO.rollbackAndClose(connection);
             e.printStackTrace();
         } finally {
-            if (rs != null) {
-                rs.close();
-            }
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            assert connection != null;
+            unblockRequestDAO.commitAndClose(connection);
         }
         return requests;
     }
@@ -147,14 +169,12 @@ public class UnblockRequestDAOImpl implements UnblockRequestDAO {
             preparedStatement.setInt(2, id);
             result = preparedStatement.executeUpdate();
         } catch (SQLException e) {
+            assert connection != null;
+            unblockRequestDAO.rollbackAndClose(connection);
             e.printStackTrace();
         } finally {
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            assert connection != null;
+            unblockRequestDAO.commitAndClose(connection);
         }
         return result;
     }

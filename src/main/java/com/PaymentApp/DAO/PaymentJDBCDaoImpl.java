@@ -4,6 +4,10 @@ import com.PaymentApp.DTO.PaymentDTO;
 import com.PaymentApp.entities.Payment;
 import com.PaymentApp.entities.User;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -52,10 +56,40 @@ public class PaymentJDBCDaoImpl implements PaymentDAO {
     }
 
     public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USERNAME, PASSWORD);
+        Connection connection = null;
+        try {
+            Context initContext = new InitialContext();
+            Context envContext = (Context) initContext.lookup("java:/comp/env");
+
+
+            DataSource ds = (DataSource) envContext.lookup("jdbc/PaymentDB");
+            connection = ds.getConnection();
+        } catch (NamingException ex) {
+            ex.printStackTrace();
+        }
+        return connection;
     }
 
-@Override
+
+    public void commitAndClose(Connection con) {
+        try {
+            con.commit();
+            con.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void rollbackAndClose(Connection con) {
+        try {
+            con.rollback();
+            con.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    @Override
     public int insertPayment(Payment payment) throws SQLException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -71,14 +105,12 @@ public class PaymentJDBCDaoImpl implements PaymentDAO {
             result = preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
+            assert connection != null;
+            paymentJDBCDaoImpl.rollbackAndClose(connection);
             e.printStackTrace();
         } finally {
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            assert connection != null;
+            paymentJDBCDaoImpl.commitAndClose(connection);
         }
         return result;
     }
@@ -105,21 +137,17 @@ public class PaymentJDBCDaoImpl implements PaymentDAO {
                 payments.add(payment);
             }
         } catch (SQLException e) {
+            assert connection != null;
+            paymentJDBCDaoImpl.rollbackAndClose(connection);
             e.printStackTrace();
         } finally {
-            if (rs != null) {
-                rs.close();
-            }
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            assert connection != null;
+            paymentJDBCDaoImpl.commitAndClose(connection);
         }
         return payments;
     }
-@Override
+
+    @Override
     public int updatePaymentStatus(String status, Integer id) throws SQLException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -132,18 +160,17 @@ public class PaymentJDBCDaoImpl implements PaymentDAO {
             preparedStatement.setInt(2, id);
             result = preparedStatement.executeUpdate();
         } catch (SQLException e) {
+            assert connection != null;
+            paymentJDBCDaoImpl.rollbackAndClose(connection);
             e.printStackTrace();
         } finally {
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            assert connection != null;
+            paymentJDBCDaoImpl.commitAndClose(connection);
         }
         return result;
     }
-@Override
+
+    @Override
     public Integer getNumberOfRows(Integer userId) throws SQLException {
         int numOfRows = 0;
         ResultSet rs = null;
@@ -159,21 +186,17 @@ public class PaymentJDBCDaoImpl implements PaymentDAO {
                 numOfRows = rs.getInt(1);
             }
         } catch (SQLException e) {
+            assert connection != null;
+            paymentJDBCDaoImpl.rollbackAndClose(connection);
             e.printStackTrace();
         } finally {
-            if (rs != null) {
-                rs.close();
-            }
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            assert connection != null;
+            paymentJDBCDaoImpl.commitAndClose(connection);
         }
         return numOfRows;
     }
-@Override
+
+    @Override
     public List<PaymentDTO> getPaymentsRecords(User user, int currentPage, int recordsPerPage, String str) throws SQLException {
         List<PaymentDTO> payments = new ArrayList<>();
         int start = currentPage * recordsPerPage - recordsPerPage;
@@ -207,17 +230,12 @@ public class PaymentJDBCDaoImpl implements PaymentDAO {
                 payments.add(payment);
             }
         } catch (SQLException e) {
+            assert connection != null;
+            paymentJDBCDaoImpl.rollbackAndClose(connection);
             e.printStackTrace();
         } finally {
-            if (rs != null) {
-                rs.close();
-            }
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
+            assert connection != null;
+            paymentJDBCDaoImpl.commitAndClose(connection);
         }
         return payments;
     }
