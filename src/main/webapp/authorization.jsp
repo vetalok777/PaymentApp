@@ -6,7 +6,10 @@
        scope="session"/>
 <fmt:setLocale value="${language}"/>
 <fmt:setBundle basename="messages"/>
-<html>
+<fmt:requestEncoding value="UTF-8"/>
+
+
+<html lang="${language}">
 <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -42,22 +45,43 @@
     <title>Authorization</title>
 </head>
 <body>
+<div class="btn-group" role="group" aria-label="Basic example">
+<form>
+    <select name="language" class="form-control" id="ExampleFormControlSelect1" onchange="submit()">
+        <option value="en" ${language == 'en' ? 'selected' : ''}>EN</option>
+        <option value="uk_UA" ${language == 'uk_UA' ? 'selected' : ''}>UK</option>
+    </select>
+
+</form>
+</div>
+
 <div class="login-form">
     <form action="<%= request.getContextPath() %>/SignIn" method="post">
-        <h2 class="text-center">Log in</h2>
+        <h2 class="text-center"><fmt:message
+                key="msg.logIn"> </fmt:message></h2>
 
         <div class="form-group">
-            <input type="text" class="form-control" name="email" placeholder="Username"/>
+            <input type="text" class="form-control" name="email" placeholder="<fmt:message
+                    key="msg.username"> </fmt:message>"/>
         </div>
         <div class="form-group">
-            <input type="password" class="form-control" name="password" placeholder="Password"/>
+            <input type="password" class="form-control" name="password" placeholder="<fmt:message
+                    key="msg.password"> </fmt:message>"/>
         </div>
         <div class="form-group">
-            <button type="submit" class="btn btn-primary btn-block">Log in</button>
+            <button type="submit" class="btn btn-primary btn-block"><fmt:message
+                    key="msg.login"> </fmt:message></button>
         </div>
     </form>
-    <h1 class="text-center">New here?</h1>
-    <p class="text-center"><a href="/PaymentApp/SignUp">Create an account</a></p>
+    <h1 class="text-center"><fmt:message
+            key="msg.newhere"> </fmt:message>?</h1>
+    <p class="text-center"><a href="/PaymentApp/SignUp"><fmt:message
+            key="msg.createAcc"> </fmt:message></a></p>
 </div>
+
+<span class="lang">
+
+
+</span>
 </body>
 </html>

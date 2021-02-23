@@ -1,7 +1,6 @@
 package com.PaymentApp.filters;
 
 import com.PaymentApp.DAO.AdminJDBCDaoImpl;
-import com.PaymentApp.DAO.DBManager;
 import com.PaymentApp.entities.Admin;
 
 import javax.servlet.*;

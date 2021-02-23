@@ -1,6 +1,15 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<html>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="/WEB-INF/mytags.tld" prefix="m" %>
+
+<c:set var="language" value="${not empty param.language ? param.language : not empty language ? language : 'en' }"
+       scope="session"/>
+<fmt:setLocale value="${language}"/>
+<fmt:setBundle basename="messages"/>
+<fmt:requestEncoding value="UTF-8"/>
+
+<html lang="${language}">
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
           integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
@@ -49,14 +58,8 @@
     </style>
 </head>
 <body>
-<%
-    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
 
-    if (session.getAttribute("username").equals("")) {
-        response.sendRedirect("authorization.jsp");
-    }
 
-%>
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
 
     <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -64,30 +67,56 @@
             <form action="PaymentDetails">
                 <input type="hidden" name="currentPage" value="1">
                 <input type="hidden" name="sorting" value="byStatus">
-                <input class="btn btn-secondary" type="submit" value="My payments">
+                <input class="btn btn-secondary" type="submit" value="<fmt:message
+                key="msg.myPayments"> </fmt:message>">
             </form>
         </div>
+
 
         <div class="navbar-nav ml-auto">
             <form action="LogOut" method="post">
-                <input class="btn btn-primary" type="submit" value="LogOut">
+                <input class="btn btn-primary" type="submit" value="<fmt:message
+                key="msg.logout"> </fmt:message>">
             </form>
         </div>
+
+
     </div>
 </nav>
 
+<div class="btn-group" role="group" aria-label="Basic example">
+    <form>
+        <select name="language" class="form-control" id="ExampleFormControlSelect1" onchange="submit()">
+            <option value="en" ${language == 'en' ? 'selected' : ''}>EN</option>
+            <option value="uk_UA" ${language == 'uk_UA' ? 'selected' : ''}>UK</option>
+        </select>
 
-<h1>Welcome,<%=request.getAttribute("login")%>
+    </form>
+
+    <span class="ml-auto">
+         Current Date is: <m:today/>
+    </span>
+</div>
+
+<h1><fmt:message
+        key="msg.welcome"> </fmt:message>,<%=request.getAttribute("login")%>
 </h1>
 
-<p>Your cards:</p>
+<p><fmt:message
+        key="msg.myCards"> </fmt:message>:</p>
 
 <form action=HomePage method="post">
-    <p>Sort By </p>
+    <p><fmt:message
+            key="msg.sortBy"> </fmt:message></p>
     <select name="sorting">
-        <option value="byBalance">Balance</option>
-        <option value="byNumber">Number</option>
-        <option value="byName">Name</option>
+        <option value="byBalance"><fmt:message
+                key="msg.balance"> </fmt:message></option>
+        <option value="<fmt:message
+                key="msg.number"> </fmt:message>">Number
+        </option>
+        <option value="<fmt:message
+                key="msg.name"> </fmt:message>">Name
+        </option>
     </select>
     <input class="btn btn-primary btn-s" type="submit" value="OK">
 </form>
@@ -96,10 +125,14 @@
 
         <table class="styled-table">
             <tr class="active-row">
-                <th>Card Name</th>
-                <th>Card Number</th>
-                <th>Card Balance</th>
-                <th>Card Status</th>
+                <th><fmt:message
+                        key="msg.cardName"> </fmt:message></th>
+                <th><fmt:message
+                        key="msg.cardNumber"> </fmt:message></th>
+                <th><fmt:message
+                        key="msg.cardBalance"> </fmt:message></th>
+                <th><fmt:message
+                        key="msg.cardStatus"> </fmt:message></th>
             </tr>
             <c:forEach items="${cards}" var="card">
                 <tr>
@@ -109,7 +142,8 @@
                     <td><c:out value="${card.status>=1 ? 'active': 'blocked'}"/></td>
                     <td>
                         <form action="Replenishment">
-                            <input type="submit" value="Deposit funds">
+                            <input type="submit" value="<fmt:message
+                key="msg.deposit"> </fmt:message>">
                             <input type="hidden" name="id" value="${card.id}"/>
                             <input type="hidden" name="status" value="${card.status}"/>
                         </form>
@@ -117,7 +151,8 @@
                         <c:if test="${card.status>=1}">
 
                             <form action="CardBlock" method="post">
-                                <input type="submit" value="Block card">
+                                <input type="submit" value="<fmt:message
+                key="msg.blockCard"> </fmt:message>">
                                 <input type="hidden" name="action" value="submit"/>
                                 <input type="hidden" name="id" value="${card.id}"/>
                             </form>
@@ -149,13 +184,15 @@
 
 <div class="btn-group" role="group" aria-label="Basic example">
     <form action="${pageContext.request.contextPath}/Payment" method="get">
-        <input type="submit" value="Create new payment">
+        <input type="submit" value="<fmt:message
+                key="msg.crNewPay"> </fmt:message>">
     </form>
 </div>
 
 <div class="btn-group" role="group" aria-label="Basic example">
     <form action="AddingCard" method="get">
-        <input type="submit" value="Add new card">
+        <input type="submit" value="<fmt:message
+                key="msg.addNewCard"> </fmt:message>">
     </form>
 </div>
 </body>
