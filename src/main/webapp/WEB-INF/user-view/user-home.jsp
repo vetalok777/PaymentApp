@@ -45,31 +45,36 @@
             color: #009879;
         }
 
+
     </style>
 </head>
 <body>
 <%
     response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
 
-    if (session.getAttribute("username") == null) {
+    if (session.getAttribute("username").equals("")) {
         response.sendRedirect("authorization.jsp");
     }
 
 %>
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
 
-<div class="btn-group" role="group" aria-label="Basic example">
-    <form action="LogOut" method="post">
-        <input class="btn btn-primary btn-sm" type="submit" value="LogOut">
-    </form>
-</div>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <div class="navbar-nav">
+            <form action="PaymentDetails">
+                <input type="hidden" name="currentPage" value="1">
+                <input type="hidden" name="sorting" value="byStatus">
+                <input class="btn btn-secondary" type="submit" value="My payments">
+            </form>
+        </div>
 
-<div class="btn-group" role="group" aria-label="Basic example">
-    <form action="PaymentDetails">
-        <input type="hidden" name="currentPage" value="1">
-        <input type="hidden" name="sorting" value="byStatus">
-        <input class="btn btn-secondary" type="submit" value="My payments">
-    </form>
-</div>
+        <div class="navbar-nav ml-auto">
+            <form action="LogOut" method="post">
+                <input class="btn btn-primary" type="submit" value="LogOut">
+            </form>
+        </div>
+    </div>
+</nav>
 
 
 <h1>Welcome,<%=request.getAttribute("login")%>
@@ -104,7 +109,7 @@
                     <td><c:out value="${card.status>=1 ? 'active': 'blocked'}"/></td>
                     <td>
                         <form action="Replenishment">
-                            <input type="submit" value="Deposit">
+                            <input type="submit" value="Deposit funds">
                             <input type="hidden" name="id" value="${card.id}"/>
                             <input type="hidden" name="status" value="${card.status}"/>
                         </form>

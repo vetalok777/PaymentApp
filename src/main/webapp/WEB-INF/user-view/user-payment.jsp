@@ -31,14 +31,16 @@
 
 
 <form action="${pageContext.request.contextPath}/Payment" method="post">
-    <p>Select card
-    <p>
-        <select name="number">
-            <c:forEach items="${cards}" var="card">
+    <p>Sender card
+    </p> <br/>
+    <select name="number">
+        <c:forEach items="${cards}" var="card">
+            <c:if test="${card.status>=1}">
                 <option value="${card.number}">${card.number} (${card.balance}UAH)</option>
-            </c:forEach>
-        </select>
-        <br/>
+            </c:if>
+        </c:forEach>
+    </select>
+    <br/>
     <p>Type amount</p>
     <input type="text" name="amount"/>
 

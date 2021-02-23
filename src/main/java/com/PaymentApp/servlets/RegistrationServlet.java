@@ -22,7 +22,7 @@ public class RegistrationServlet extends HttpServlet {
             "     color: red; \n" +
             "   }\n" +
             "  </style>" +
-            "<p> <span class=\"colortext\">Invalid email or password!" +
+            "<p> <span class=\"colortext\">Invalid email , password or firstName!" +
             "Password should contains : 8-15 characters, at least " +
             "one uppercase letter and one digit! </span> \n" +
             "  </p>");
@@ -57,7 +57,7 @@ public class RegistrationServlet extends HttpServlet {
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
         try {
-            if (isValidEmailAddress(login) && isValidPassword(password)) {
+            if (isValidEmailAddress(login) && isValidPassword(password) && isValidFirstName(firstname)) {
                 result = userJDBCDaoImpl.insertUser(user);
                 if (result > 0) {
                     User user1 = userJDBCDaoImpl.findUser(login);
@@ -94,6 +94,13 @@ public class RegistrationServlet extends HttpServlet {
         java.util.regex.Matcher m = p.matcher(email);
         return m.matches();
     }
+    public static boolean isValidFirstName(String firstName) {
+        String ePattern = "/^[a-z ,.'-]+$/i";
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
+        java.util.regex.Matcher m = p.matcher(firstName);
+        return m.matches();
+    }
+
 
 
 }

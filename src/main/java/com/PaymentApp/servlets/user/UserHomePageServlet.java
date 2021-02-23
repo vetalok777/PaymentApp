@@ -25,33 +25,35 @@ public class UserHomePageServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         HttpSession session = req.getSession();
-        if (session.getAttribute("username") == null) {
-            resp.sendRedirect("/PaymentApp/authorization.jsp");
-        }
-        try {
-            List<Card> cards = new ArrayList<>();
-            User user = UserJDBCDaoImpl.getInstance().findUser((String) session.getAttribute("username"));
-            if (req.getParameter("sorting") == null) {
-                String sort = "ORDER BY card_status DESC;";
-                cards = CardJDBCDaoImpl.getInstance().findAllCards(user, sort);
-            } else if (req.getParameter("sorting").equals("byNumber")) {
-                String sort = "ORDER BY card_number DESC;";
-                cards = CardJDBCDaoImpl.getInstance().findAllCards(user, sort);
-            } else if (req.getParameter("sorting").equals("byBalance")) {
-                String sort = "ORDER BY balance DESC;";
-                cards = CardJDBCDaoImpl.getInstance().findAllCards(user, sort);
-            } else if (req.getParameter("sorting").equals("byName")) {
-                String sort = "ORDER BY card_name DESC;";
-                cards = CardJDBCDaoImpl.getInstance().findAllCards(user, sort);
+        System.out.println(session.getAttribute("username") );
+        if (session.getAttribute("username")==null || session.getAttribute("username").equals("")) {
+            RequestDispatcher dispatcher = req.getRequestDispatcher("/authorization.jsp");
+            dispatcher.forward(req, resp);
+        } else {
+            try {
+                List<Card> cards = new ArrayList<>();
+                User user = UserJDBCDaoImpl.getInstance().findUser((String) session.getAttribute("username"));
+                if (req.getParameter("sorting") == null) {
+                    String sort = "ORDER BY card_status DESC;";
+                    cards = CardJDBCDaoImpl.getInstance().findAllCards(user, sort);
+                } else if (req.getParameter("sorting").equals("byNumber")) {
+                    String sort = "ORDER BY card_number DESC;";
+                    cards = CardJDBCDaoImpl.getInstance().findAllCards(user, sort);
+                } else if (req.getParameter("sorting").equals("byBalance")) {
+                    String sort = "ORDER BY balance DESC;";
+                    cards = CardJDBCDaoImpl.getInstance().findAllCards(user, sort);
+                } else if (req.getParameter("sorting").equals("byName")) {
+                    String sort = "ORDER BY card_name DESC;";
+                    cards = CardJDBCDaoImpl.getInstance().findAllCards(user, sort);
+                }
+                req.setAttribute("cards", cards);
+                req.setAttribute("login", user.getFirstName());
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-            req.setAttribute("cards", cards);
-            req.setAttribute("login", user.getFirstName());
-        } catch (SQLException e) {
-            e.printStackTrace();
+            RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/user-view/user-home.jsp");
+            dispatcher.forward(req, resp);
         }
-        RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/user-view/user-home.jsp");
-        dispatcher.forward(req, resp);
     }
 }

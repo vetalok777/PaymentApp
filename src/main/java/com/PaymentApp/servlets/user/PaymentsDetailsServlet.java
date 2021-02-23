@@ -1,10 +1,10 @@
 package com.PaymentApp.servlets.user;
 
-import com.PaymentApp.DAO.CardJDBCDaoImpl;
+
 import com.PaymentApp.DAO.PaymentJDBCDaoImpl;
 import com.PaymentApp.DAO.UserJDBCDaoImpl;
 import com.PaymentApp.DTO.PaymentDTO;
-import com.PaymentApp.entities.Card;
+
 import com.PaymentApp.entities.User;
 
 import javax.servlet.RequestDispatcher;
@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
+
 import java.util.List;
 
 public class PaymentsDetailsServlet extends HttpServlet {
@@ -27,7 +27,7 @@ public class PaymentsDetailsServlet extends HttpServlet {
         String sorting = req.getParameter("sorting");
         int currentPage = Integer.parseInt(sPageId);
         int total = 5;
-        List<PaymentDTO> payments = new ArrayList<>();
+        List<PaymentDTO> payments;
         try {
             User user = UserJDBCDaoImpl.getInstance().findUser((String) session.getAttribute("username"));
             if (sorting.equals("byDateNew")) {

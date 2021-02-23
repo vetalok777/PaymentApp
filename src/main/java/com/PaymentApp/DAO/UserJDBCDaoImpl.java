@@ -128,7 +128,7 @@ public class UserJDBCDaoImpl implements UserDAO {
 
     @Override
     public User findUser(String login) throws SQLException {
-        User user = new User();
+        User user = null;
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet rs = null;
@@ -138,6 +138,7 @@ public class UserJDBCDaoImpl implements UserDAO {
             preparedStatement.setString(1, login);
             rs = preparedStatement.executeQuery();
             while (rs.next()) {
+                user = new User();
                 user.setFirstName(rs.getString("first_name"));
                 user.setLogin(rs.getString("email"));
                 user.setId(rs.getInt("id"));

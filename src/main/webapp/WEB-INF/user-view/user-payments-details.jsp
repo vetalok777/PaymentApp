@@ -18,19 +18,22 @@
 
 %>
 
-<div class="btn-group" role="group" aria-label="Basic example">
-    <form action="LogOut" method="post">
-        <input class="btn btn-primary btn-sm" type="submit" value="LogOut">
-    </form>
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
 
-</div>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <div class="navbar-nav">
+            <form action="HomePage" method="post">
+                <input class="btn btn-secondary" type="submit" value="Home">
+            </form>
+        </div>
 
-<div class="btn-group" role="group" aria-label="Basic example">
-
-    <form action="${pageContext.request.contextPath}/HomePage" method="post">
-        <input class="btn btn-secondary" type="submit" value="Home">
-    </form>
-</div>
+        <div class="navbar-nav ml-auto">
+            <form action="LogOut" method="post">
+                <input class="btn btn-primary" type="submit" value="LogOut">
+            </form>
+        </div>
+    </div>
+</nav>
 
 <p>Your payments:</p>
 
