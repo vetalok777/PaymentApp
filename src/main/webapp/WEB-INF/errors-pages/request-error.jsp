@@ -1,20 +1,25 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Metalolom
-  Date: 16.02.2021
-  Time: 22:08
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="/WEB-INF/mytags.tld" prefix="m" %>
+
+<c:set var="language" value="${not empty param.language ? param.language : not empty language ? language : 'en' }"
+       scope="session"/>
+<fmt:setLocale value="${language}"/>
+<fmt:setBundle basename="messages"/>
+<fmt:requestEncoding value="UTF-8"/>
+
+<html lang="${language}">
+
 <head>
     <title>Request Error</title>
 </head>
 <body>
-<h1>Request has already been sent</h1>
+<h1><fmt:message
+        key="msg.requestAlready"> </fmt:message></h1>
 </body>
 
-<form action="${pageContext.request.contextPath}/HomePage" method="post">
-    <input class="btn btn-secondary" type="submit" value="Back">
+<form action="${pageContext.request.contextPath}/HomePage">
+    <input class="btn btn-secondary" type="submit" value="<fmt:message
+        key="msg.back"> </fmt:message>">
 </form>
 </html>

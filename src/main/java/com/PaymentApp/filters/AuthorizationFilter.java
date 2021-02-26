@@ -39,8 +39,8 @@ public class AuthorizationFilter implements Filter {
                     session.setAttribute("username", login);
                     request.setAttribute("name", user.getFirstName());
 
-                    RequestDispatcher dispatcher = servletRequest.getRequestDispatcher("/HomePage");
-                    dispatcher.forward(servletRequest, servletResponse);
+                    response.sendRedirect(request.getContextPath() + "/HomePage");
+
                 } else {
                     out.print(" <style>\n" +
                             "   .colortext {\n" +

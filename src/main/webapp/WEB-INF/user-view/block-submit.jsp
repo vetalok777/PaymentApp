@@ -1,26 +1,31 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Metalolom
-  Date: 16.02.2021
-  Time: 20:00
-  To change this template use File | Settings | File Templates.
---%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+
+<c:set var="language" value="${not empty param.language ? param.language : not empty language ? language : 'en' }"
+       scope="session"/>
+<fmt:setLocale value="${language}"/>
+<fmt:setBundle basename="messages"/>
+<fmt:requestEncoding value="UTF-8"/>
+
+<html lang="${language}">
 <head>
     <title>Submit</title>
 </head>
 <body>
-<h1>Are you sure you want to block your card?</h1> <br/>
-<h1>Card can be unblocked only by admin.</h1>
+<h1><fmt:message
+        key="msg.areYouSureYouWant"> </fmt:message></h1> <br/>
 
 <form action="CardBlock" method="post">
-    <input type="submit" value="Yes">
+    <input type="submit" value="<fmt:message
+                key="msg.yes"> </fmt:message>">
     <input type="hidden" name="action" value="block">
 </form>
 
-<form action="${pageContext.request.contextPath}/HomePage" method="post">
-    <input type="submit" value="No">
+<form action="${pageContext.request.contextPath}/HomePage">
+    <input type="submit" value="<fmt:message
+                key="msg.no"> </fmt:message>">
 </form>
 </body>
 </html>

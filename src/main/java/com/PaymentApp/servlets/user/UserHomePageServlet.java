@@ -20,11 +20,6 @@ import java.util.List;
 public class UserHomePageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession();
         System.out.println(session.getAttribute("username") );
         if (session.getAttribute("username")==null || session.getAttribute("username").equals("")) {
@@ -55,5 +50,10 @@ public class UserHomePageServlet extends HttpServlet {
             RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/user-view/user-home.jsp");
             dispatcher.forward(req, resp);
         }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
     }
 }

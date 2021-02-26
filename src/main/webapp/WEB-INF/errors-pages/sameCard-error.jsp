@@ -1,20 +1,22 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Metalolom
-  Date: 12.02.2021
-  Time: 17:44
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<c:set var="language" value="${not empty param.language ? param.language : not empty language ? language : 'en' }"
+       scope="session"/>
+<fmt:setLocale value="${language}"/>
+<fmt:setBundle basename="messages"/>
+<fmt:requestEncoding value="UTF-8"/>
+<html lang="${language}">
 <head>
     <title>Error</title>
 </head>
 <body>
-<h1>You cannot send money to the sender's card</h1>
+<h1><fmt:message
+        key="msg.youCantSendMoneyToSend"> </fmt:message></h1>
 
 <form action="${pageContext.request.contextPath}/Payment" method="get">
-    <input type="submit" value="Back">
+    <input type="submit" value="<fmt:message
+        key="msg.back"> </fmt:message>">
 </form>
 </body>
 </html>

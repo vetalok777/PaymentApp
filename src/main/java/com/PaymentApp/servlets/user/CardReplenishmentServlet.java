@@ -39,8 +39,7 @@ public class CardReplenishmentServlet extends HttpServlet {
             if (status >= 1) {
                 try {
                     CardJDBCDaoImpl.getInstance().updateBalance(id, sum);
-                    RequestDispatcher requestDispatcher = req.getRequestDispatcher("/HomePage");
-                    requestDispatcher.forward(req, resp);
+                    resp.sendRedirect(req.getContextPath() + "/HomePage");
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

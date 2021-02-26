@@ -17,6 +17,8 @@
 
     <title>Home Page</title>
     <style>
+      
+
         .styled-table {
             border-collapse: collapse;
             margin: 25px 0;
@@ -93,9 +95,10 @@
 
     </form>
 
-    <span class="ml-auto">
-         Current Date is: <m:today/>
-    </span>
+    <p style="text-align:right">
+        <fmt:message
+                key="msg.currentDate"> </fmt:message> <m:today/>
+    </p>
 </div>
 
 <h1><fmt:message
@@ -105,17 +108,19 @@
 <p><fmt:message
         key="msg.myCards"> </fmt:message>:</p>
 
-<form action=HomePage method="post">
+<form action=HomePage>
     <p><fmt:message
             key="msg.sortBy"> </fmt:message></p>
     <select name="sorting">
         <option value="byBalance"><fmt:message
                 key="msg.balance"> </fmt:message></option>
-        <option value="<fmt:message
-                key="msg.number"> </fmt:message>">Number
+        <option value="byNumber">
+            <fmt:message
+                    key="msg.number"> </fmt:message>
         </option>
-        <option value="<fmt:message
-                key="msg.name"> </fmt:message>">Name
+        <option value="byName">
+            <fmt:message
+                    key="msg.name"> </fmt:message>
         </option>
     </select>
     <input class="btn btn-primary btn-s" type="submit" value="OK">
@@ -139,7 +144,16 @@
                     <td>${card.name}</td>
                     <td>${card.number}</td>
                     <td>${card.balance}UAH</td>
-                    <td><c:out value="${card.status>=1 ? 'active': 'blocked'}"/></td>
+                    <td><c:if test="${card.status>=1}"><fmt:message key="msg.active">
+
+
+                    </fmt:message> </c:if>
+
+                        <c:if test="${card.status<1}"><fmt:message key="msg.blocked">
+
+
+                        </fmt:message> </c:if>
+                    </td>
                     <td>
                         <form action="Replenishment">
                             <input type="submit" value="<fmt:message
@@ -162,7 +176,8 @@
                         <c:if test="${card.status<1}">
 
                             <form action="CardBlock" method="post">
-                                <input type="submit" value="Unblock card">
+                                <input type="submit" value="<fmt:message
+                key="msg.unblockCard"> </fmt:message>">
                                 <input type="hidden" name="id" value="${card.id}"/>
                                 <input type="hidden" name="action" value="unblock"/>
 
