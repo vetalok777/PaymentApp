@@ -4,6 +4,7 @@ import com.PaymentApp.DAO.CardJDBCDaoImpl;
 import com.PaymentApp.DAO.UserJDBCDaoImpl;
 import com.PaymentApp.entities.Card;
 import com.PaymentApp.entities.User;
+import org.apache.log4j.Logger;
 
 
 import javax.servlet.RequestDispatcher;
@@ -20,9 +21,9 @@ import java.util.List;
 public class UserHomePageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        final Logger LOGGER = Logger.getLogger(UserHomePageServlet.class);
         HttpSession session = req.getSession();
-        System.out.println(session.getAttribute("username") );
-        if (session.getAttribute("username")==null || session.getAttribute("username").equals("")) {
+        if (session.getAttribute("username") == null || session.getAttribute("username").equals("")) {
             RequestDispatcher dispatcher = req.getRequestDispatcher("/authorization.jsp");
             dispatcher.forward(req, resp);
         } else {
@@ -32,20 +33,24 @@ public class UserHomePageServlet extends HttpServlet {
                 if (req.getParameter("sorting") == null) {
                     String sort = "ORDER BY card_status DESC;";
                     cards = CardJDBCDaoImpl.getInstance().findAllCards(user, sort);
+                    LOGGER.info("Sorting user cards by status");
                 } else if (req.getParameter("sorting").equals("byNumber")) {
                     String sort = "ORDER BY card_number DESC;";
                     cards = CardJDBCDaoImpl.getInstance().findAllCards(user, sort);
+                    LOGGER.info("Sorting user cards by number");
                 } else if (req.getParameter("sorting").equals("byBalance")) {
                     String sort = "ORDER BY balance DESC;";
                     cards = CardJDBCDaoImpl.getInstance().findAllCards(user, sort);
+                    LOGGER.info("Sorting user cards by balance");
                 } else if (req.getParameter("sorting").equals("byName")) {
                     String sort = "ORDER BY card_name DESC;";
                     cards = CardJDBCDaoImpl.getInstance().findAllCards(user, sort);
+                    LOGGER.info("Sorting user cards by name");
                 }
                 req.setAttribute("cards", cards);
                 req.setAttribute("login", user.getFirstName());
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOGGER.error(e.getMessage());
             }
             RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/user-view/user-home.jsp");
             dispatcher.forward(req, resp);

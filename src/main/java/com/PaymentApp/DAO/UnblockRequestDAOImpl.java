@@ -2,6 +2,7 @@ package com.PaymentApp.DAO;
 
 import com.PaymentApp.entities.Card;
 import com.PaymentApp.entities.UnblockRequest;
+import org.apache.log4j.Logger;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -25,14 +26,14 @@ public class UnblockRequestDAOImpl implements UnblockRequestDAO {
     private static final String UPDATE_REQUEST_STATUS = "UPDATE unblock_request SET request_status = (?) WHERE id=(?);";
 
     private static UnblockRequestDAOImpl unblockRequestDAO;
-
+    final Logger LOGGER = Logger.getLogger(UnblockRequestDAOImpl.class);
 
     public UnblockRequestDAOImpl() {
         try {
             Class.forName(DRIVER);
-            System.out.println("Successfully!");
+            LOGGER.info("Driver connected successfully");
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
     }
 
@@ -52,6 +53,7 @@ public class UnblockRequestDAOImpl implements UnblockRequestDAO {
 
             DataSource ds = (DataSource) envContext.lookup("jdbc/PaymentDB");
             connection = ds.getConnection();
+            LOGGER.info("Connection is successful");
         } catch (NamingException ex) {
             ex.printStackTrace();
         }
@@ -63,8 +65,9 @@ public class UnblockRequestDAOImpl implements UnblockRequestDAO {
         try {
             con.commit();
             con.close();
+            LOGGER.info("Connection commit and close");
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            LOGGER.error(ex.getMessage());
         }
     }
 
@@ -72,8 +75,9 @@ public class UnblockRequestDAOImpl implements UnblockRequestDAO {
         try {
             con.rollback();
             con.close();
+            LOGGER.info("Connection rollback and close");
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            LOGGER.error(ex.getMessage());
         }
     }
 
@@ -89,10 +93,11 @@ public class UnblockRequestDAOImpl implements UnblockRequestDAO {
             preparedStatement.setString(1, String.valueOf(unblockRequest.getCreationDate()));
             preparedStatement.setInt(2, unblockRequest.getCardId());
             result = preparedStatement.executeUpdate();
+            LOGGER.info("Requset inserted");
         } catch (SQLException e) {
             assert connection != null;
             unblockRequestDAO.rollbackAndClose(connection);
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         } finally {
             assert connection != null;
             unblockRequestDAO.commitAndClose(connection);
@@ -115,10 +120,11 @@ public class UnblockRequestDAOImpl implements UnblockRequestDAO {
             while (rs.next()) {
                 result = 1;
             }
+            LOGGER.info("Found request");
         } catch (SQLException e) {
             assert connection != null;
             unblockRequestDAO.rollbackAndClose(connection);
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         } finally {
             assert connection != null;
             unblockRequestDAO.commitAndClose(connection);
@@ -145,10 +151,11 @@ public class UnblockRequestDAOImpl implements UnblockRequestDAO {
                 UnblockRequest unblockRequest = new UnblockRequest(id, status, date, cardId);
                 requests.add(unblockRequest);
             }
+            LOGGER.info("Found all requests");
         } catch (SQLException e) {
             assert connection != null;
             unblockRequestDAO.rollbackAndClose(connection);
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         } finally {
             assert connection != null;
             unblockRequestDAO.commitAndClose(connection);
@@ -168,10 +175,11 @@ public class UnblockRequestDAOImpl implements UnblockRequestDAO {
             preparedStatement.setString(1, status);
             preparedStatement.setInt(2, id);
             result = preparedStatement.executeUpdate();
+            LOGGER.info("Request status changed");
         } catch (SQLException e) {
             assert connection != null;
             unblockRequestDAO.rollbackAndClose(connection);
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         } finally {
             assert connection != null;
             unblockRequestDAO.commitAndClose(connection);

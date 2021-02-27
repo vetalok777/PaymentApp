@@ -2,6 +2,8 @@ package com.PaymentApp.DAO;
 
 import com.PaymentApp.entities.UnblockRequest;
 import com.PaymentApp.entities.User;
+import org.apache.log4j.Logger;
+import sun.rmi.runtime.Log;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -25,13 +27,14 @@ public class UserJDBCDaoImpl implements UserDAO {
     private static final String UPDATE_USER_STATUS = "UPDATE user SET user_status = (?) WHERE id=(?);";
 
     private static UserJDBCDaoImpl userJDBCDaoImpl;
+    final Logger LOGGER = Logger.getLogger(UserJDBCDaoImpl.class);
 
     public UserJDBCDaoImpl() {
         try {
             Class.forName(DRIVER);
-            System.out.println("Successfully!");
+            LOGGER.info("Driver connected successfully");
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
     }
 
@@ -51,8 +54,9 @@ public class UserJDBCDaoImpl implements UserDAO {
 
             DataSource ds = (DataSource) envContext.lookup("jdbc/PaymentDB");
             connection = ds.getConnection();
+            LOGGER.info("Connection is successful");
         } catch (NamingException ex) {
-            ex.printStackTrace();
+            LOGGER.error(ex.getMessage());
         }
         return connection;
     }
@@ -62,8 +66,9 @@ public class UserJDBCDaoImpl implements UserDAO {
         try {
             con.commit();
             con.close();
+            LOGGER.info("Connection commit and close");
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            LOGGER.error(ex.getMessage());
         }
     }
 
@@ -71,8 +76,9 @@ public class UserJDBCDaoImpl implements UserDAO {
         try {
             con.rollback();
             con.close();
+            LOGGER.info("Connection rollback and close");
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            LOGGER.error(ex.getMessage());
         }
     }
 
@@ -89,11 +95,11 @@ public class UserJDBCDaoImpl implements UserDAO {
             preparedStatement.setString(2, user.getPassword());
             preparedStatement.setString(3, user.getFirstName());
             result = preparedStatement.executeUpdate();
-
+            LOGGER.info("User inserted");
         } catch (SQLException e) {
             assert connection != null;
             userJDBCDaoImpl.rollbackAndClose(connection);
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         } finally {
             assert connection != null;
             userJDBCDaoImpl.commitAndClose(connection);
@@ -115,10 +121,11 @@ public class UserJDBCDaoImpl implements UserDAO {
             if (rs.next()) {
                 result = rs.getString(1);
             }
+            LOGGER.info("User password is found");
         } catch (SQLException e) {
             assert connection != null;
             userJDBCDaoImpl.rollbackAndClose(connection);
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         } finally {
             assert connection != null;
             userJDBCDaoImpl.commitAndClose(connection);
@@ -145,10 +152,11 @@ public class UserJDBCDaoImpl implements UserDAO {
                 user.setPassword(rs.getString("password"));
                 user.setStatus(rs.getInt("user_status"));
             }
+            LOGGER.info("Found user");
         } catch (SQLException e) {
             assert connection != null;
             userJDBCDaoImpl.rollbackAndClose(connection);
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         } finally {
             assert connection != null;
             userJDBCDaoImpl.commitAndClose(connection);
@@ -176,10 +184,11 @@ public class UserJDBCDaoImpl implements UserDAO {
                 User user = new User(id, email, password, firstName, status);
                 users.add(user);
             }
+            LOGGER.info("Found all users");
         } catch (SQLException e) {
             assert connection != null;
             userJDBCDaoImpl.rollbackAndClose(connection);
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         } finally {
             assert connection != null;
             userJDBCDaoImpl.commitAndClose(connection);
@@ -198,10 +207,11 @@ public class UserJDBCDaoImpl implements UserDAO {
             preparedStatement.setInt(1, status);
             preparedStatement.setInt(2, id);
             result = preparedStatement.executeUpdate();
+            LOGGER.info("User status changed");
         } catch (SQLException e) {
             assert connection != null;
             userJDBCDaoImpl.rollbackAndClose(connection);
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         } finally {
             assert connection != null;
             userJDBCDaoImpl.commitAndClose(connection);

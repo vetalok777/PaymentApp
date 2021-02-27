@@ -4,6 +4,7 @@ import com.PaymentApp.DAO.CardJDBCDaoImpl;
 import com.PaymentApp.DAO.UserJDBCDaoImpl;
 import com.PaymentApp.entities.Card;
 import com.PaymentApp.entities.User;
+import org.apache.log4j.Logger;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -17,6 +18,7 @@ public class RegistrationServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     UserJDBCDaoImpl userJDBCDaoImpl = UserJDBCDaoImpl.getInstance();
     CardJDBCDaoImpl cardJDBCDaoImpl = CardJDBCDaoImpl.getInstance();
+    final Logger LOGGER = Logger.getLogger(RegistrationServlet.class);
     public static String INVALID_EMAIL_OR_PASSWORD = (" <style>\n" +
             "   .colortext {\n" +
             "     color: red; \n" +
@@ -76,7 +78,7 @@ public class RegistrationServlet extends HttpServlet {
                 dispatcher.include(request, response);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+           LOGGER.error(e.getMessage());
         }
     }
 

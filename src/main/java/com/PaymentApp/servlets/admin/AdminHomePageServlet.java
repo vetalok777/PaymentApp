@@ -2,6 +2,8 @@ package com.PaymentApp.servlets.admin;
 
 import com.PaymentApp.DAO.UnblockRequestDAOImpl;
 import com.PaymentApp.entities.UnblockRequest;
+import com.PaymentApp.servlets.LogOutServlet;
+import org.apache.log4j.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -13,6 +15,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class AdminHomePageServlet extends HttpServlet {
+    final Logger LOGGER = Logger.getLogger(AdminHomePageServlet.class);
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -25,7 +29,7 @@ public class AdminHomePageServlet extends HttpServlet {
             requests = UnblockRequestDAOImpl.getInstance().findAllRequests();
             req.setAttribute("requests", requests);
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
 
         String html = "/WEB-INF/admin-view/admin-home.jsp";

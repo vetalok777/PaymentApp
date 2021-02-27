@@ -2,6 +2,7 @@ package com.PaymentApp.DAO;
 
 import com.PaymentApp.entities.Card;
 import com.PaymentApp.entities.User;
+import org.apache.log4j.Logger;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -33,13 +34,13 @@ public class CardJDBCDaoImpl implements CardDAO {
     private static final String BLOCK_CARD = "UPDATE card SET card.card_status = 0 WHERE id=(?);";
     private static final String UPDATE_CARD_STATUS = "UPDATE card SET card.card_status = 1 WHERE id=(?);";
     private static CardJDBCDaoImpl cardJDBCDaoImpl;
-
+    final Logger LOGGER = Logger.getLogger(CardJDBCDaoImpl.class);
     public CardJDBCDaoImpl() {
         try {
             Class.forName(DRIVER);
-            System.out.println("Successfully!");
+            LOGGER.info("Driver connected successfully");
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
     }
 
@@ -59,8 +60,9 @@ public class CardJDBCDaoImpl implements CardDAO {
 
             DataSource ds = (DataSource) envContext.lookup("jdbc/PaymentDB");
             connection = ds.getConnection();
+            LOGGER.info("Connection successfully");
         } catch (NamingException ex) {
-            ex.printStackTrace();
+            LOGGER.error(ex.getMessage());
         }
         return connection;
     }
@@ -70,8 +72,9 @@ public class CardJDBCDaoImpl implements CardDAO {
         try {
             con.commit();
             con.close();
+            LOGGER.info("Connection commit and close successfully");
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            LOGGER.error(ex.getMessage());
         }
     }
 
@@ -79,8 +82,9 @@ public class CardJDBCDaoImpl implements CardDAO {
         try {
             con.rollback();
             con.close();
+            LOGGER.info("Connection rollback and close");
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            LOGGER.error(ex.getMessage());
         }
     }
 
@@ -99,10 +103,10 @@ public class CardJDBCDaoImpl implements CardDAO {
             preparedStatement.setBigDecimal(3, card.getBalance());
             preparedStatement.setInt(4, card.getUserId());
             result = preparedStatement.executeUpdate();
-
+            LOGGER.info("Inserting card is successfully");
         } catch (SQLException e) {
             cardJDBCDaoImpl.rollbackAndClose(connection);
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         } finally {
             cardJDBCDaoImpl.commitAndClose(connection);
         }
@@ -131,10 +135,11 @@ public class CardJDBCDaoImpl implements CardDAO {
                 Card card = new Card(id, name, number, balance, userId, status);
                 cards.add(card);
             }
+            LOGGER.info("Found all cards");
         } catch (SQLException e) {
             assert connection != null;
             cardJDBCDaoImpl.rollbackAndClose(connection);
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         } finally {
             assert connection != null;
             cardJDBCDaoImpl.commitAndClose(connection);
@@ -154,10 +159,11 @@ public class CardJDBCDaoImpl implements CardDAO {
             preparedStatement.setBigDecimal(1, value);
             preparedStatement.setInt(2, id);
             result = preparedStatement.executeUpdate();
+            LOGGER.info("Updated balance");
         } catch (SQLException e) {
             assert connection != null;
             cardJDBCDaoImpl.rollbackAndClose(connection);
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         } finally {
             assert connection != null;
             cardJDBCDaoImpl.commitAndClose(connection);
@@ -177,10 +183,11 @@ public class CardJDBCDaoImpl implements CardDAO {
             preparedStatement.setBigDecimal(1, value);
             preparedStatement.setInt(2, id);
             result = preparedStatement.executeUpdate();
+            LOGGER.info("Decreased balance");
         } catch (SQLException e) {
             assert connection != null;
             cardJDBCDaoImpl.rollbackAndClose(connection);
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         } finally {
             assert connection != null;
             cardJDBCDaoImpl.commitAndClose(connection);
@@ -203,10 +210,11 @@ public class CardJDBCDaoImpl implements CardDAO {
             while (rs.next()) {
                 result = rs.getBigDecimal("balance");
             }
+            LOGGER.info("Gets card balance");
         } catch (SQLException e) {
             assert connection != null;
             cardJDBCDaoImpl.rollbackAndClose(connection);
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         } finally {
             assert connection != null;
             cardJDBCDaoImpl.commitAndClose(connection);
@@ -228,10 +236,11 @@ public class CardJDBCDaoImpl implements CardDAO {
             while (rs.next()) {
                 result = true;
             }
+            LOGGER.info("Found card");
         } catch (SQLException e) {
             assert connection != null;
             cardJDBCDaoImpl.rollbackAndClose(connection);
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         } finally {
             assert connection != null;
             cardJDBCDaoImpl.commitAndClose(connection);
@@ -254,10 +263,11 @@ public class CardJDBCDaoImpl implements CardDAO {
             while (rs.next()) {
                 result = true;
             }
+            LOGGER.info("Found card by name");
         } catch (SQLException e) {
             assert connection != null;
             cardJDBCDaoImpl.rollbackAndClose(connection);
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         } finally {
             assert connection != null;
             cardJDBCDaoImpl.commitAndClose(connection);
@@ -278,10 +288,11 @@ public class CardJDBCDaoImpl implements CardDAO {
             while (rs.next()) {
                 return (rs.getInt("id"));
             }
+            LOGGER.info("Got card id");
         } catch (SQLException e) {
             assert connection != null;
             cardJDBCDaoImpl.rollbackAndClose(connection);
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         } finally {
             assert connection != null;
             cardJDBCDaoImpl.commitAndClose(connection);
@@ -305,10 +316,11 @@ public class CardJDBCDaoImpl implements CardDAO {
             while (rs.next()) {
                 result = rs.getInt("card_status");
             }
+            LOGGER.info("Got card status");
         } catch (SQLException e) {
             assert connection != null;
             cardJDBCDaoImpl.rollbackAndClose(connection);
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         } finally {
             assert connection != null;
             cardJDBCDaoImpl.commitAndClose(connection);
@@ -328,10 +340,12 @@ public class CardJDBCDaoImpl implements CardDAO {
             preparedStatement = connection.prepareStatement(BLOCK_CARD);
             preparedStatement.setInt(1, cardId);
             result = preparedStatement.executeUpdate();
-        } catch (SQLException e) {
+            LOGGER.info("Card is blocked by id");
+        }
+        catch (SQLException e) {
             assert connection != null;
             cardJDBCDaoImpl.rollbackAndClose(connection);
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         } finally {
             assert connection != null;
             cardJDBCDaoImpl.commitAndClose(connection);
@@ -350,10 +364,11 @@ public class CardJDBCDaoImpl implements CardDAO {
             preparedStatement = connection.prepareStatement(UPDATE_CARD_STATUS);
             preparedStatement.setInt(1, cardId);
             result = preparedStatement.executeUpdate();
+            LOGGER.info("Card status has changed");
         } catch (SQLException e) {
             assert connection != null;
             cardJDBCDaoImpl.rollbackAndClose(connection);
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         } finally {
             assert connection != null;
             cardJDBCDaoImpl.commitAndClose(connection);

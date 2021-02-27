@@ -3,6 +3,7 @@ package com.PaymentApp.DAO;
 import com.PaymentApp.DTO.PaymentDTO;
 import com.PaymentApp.entities.Payment;
 import com.PaymentApp.entities.User;
+import org.apache.log4j.Logger;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -38,13 +39,14 @@ public class PaymentJDBCDaoImpl implements PaymentDAO {
 
 
     private static PaymentJDBCDaoImpl paymentJDBCDaoImpl;
+    final Logger LOGGER = Logger.getLogger(PaymentJDBCDaoImpl.class);
 
     public PaymentJDBCDaoImpl() {
         try {
             Class.forName(DRIVER);
-            System.out.println("Successfully!");
+            LOGGER.info("Driver connected successfully");
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
     }
 
@@ -64,8 +66,9 @@ public class PaymentJDBCDaoImpl implements PaymentDAO {
 
             DataSource ds = (DataSource) envContext.lookup("jdbc/PaymentDB");
             connection = ds.getConnection();
+            LOGGER.info("Connection is successfully");
         } catch (NamingException ex) {
-            ex.printStackTrace();
+            LOGGER.error(ex.getMessage());
         }
         return connection;
     }
@@ -75,8 +78,9 @@ public class PaymentJDBCDaoImpl implements PaymentDAO {
         try {
             con.commit();
             con.close();
+            LOGGER.info("Connection commit and close");
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            LOGGER.error(ex.getMessage());
         }
     }
 
@@ -84,8 +88,9 @@ public class PaymentJDBCDaoImpl implements PaymentDAO {
         try {
             con.rollback();
             con.close();
+            LOGGER.info("Connection rollback and close");
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            LOGGER.error(ex.getMessage());
         }
     }
 
@@ -103,11 +108,11 @@ public class PaymentJDBCDaoImpl implements PaymentDAO {
             preparedStatement.setInt(3, payment.getSender_id());
             preparedStatement.setInt(4, payment.getReceiver_id());
             result = preparedStatement.executeUpdate();
-
+            LOGGER.info("Payment inserted");
         } catch (SQLException e) {
             assert connection != null;
             paymentJDBCDaoImpl.rollbackAndClose(connection);
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         } finally {
             assert connection != null;
             paymentJDBCDaoImpl.commitAndClose(connection);
@@ -136,10 +141,11 @@ public class PaymentJDBCDaoImpl implements PaymentDAO {
                 PaymentDTO payment = new PaymentDTO(id, amount, date, status, sender, receiver);
                 payments.add(payment);
             }
+            LOGGER.info("Found all payments");
         } catch (SQLException e) {
             assert connection != null;
             paymentJDBCDaoImpl.rollbackAndClose(connection);
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         } finally {
             assert connection != null;
             paymentJDBCDaoImpl.commitAndClose(connection);
@@ -159,10 +165,11 @@ public class PaymentJDBCDaoImpl implements PaymentDAO {
             preparedStatement.setString(1, status);
             preparedStatement.setInt(2, id);
             result = preparedStatement.executeUpdate();
+            LOGGER.info("Payment status is updated");
         } catch (SQLException e) {
             assert connection != null;
             paymentJDBCDaoImpl.rollbackAndClose(connection);
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         } finally {
             assert connection != null;
             paymentJDBCDaoImpl.commitAndClose(connection);
@@ -218,7 +225,7 @@ public class PaymentJDBCDaoImpl implements PaymentDAO {
             preparedStatement.setInt(3, recordsPerPage);
 
             rs = preparedStatement.executeQuery();
-
+LOGGER.info("Got Payments records");
             while (rs.next()) {
                 Integer id = rs.getInt("id");
                 BigDecimal amount = rs.getBigDecimal("amount");
@@ -232,7 +239,7 @@ public class PaymentJDBCDaoImpl implements PaymentDAO {
         } catch (SQLException e) {
             assert connection != null;
             paymentJDBCDaoImpl.rollbackAndClose(connection);
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         } finally {
             assert connection != null;
             paymentJDBCDaoImpl.commitAndClose(connection);

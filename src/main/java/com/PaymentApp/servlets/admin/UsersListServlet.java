@@ -4,6 +4,8 @@ package com.PaymentApp.servlets.admin;
 import com.PaymentApp.DAO.UserJDBCDaoImpl;
 
 import com.PaymentApp.entities.User;
+import com.PaymentApp.servlets.LogOutServlet;
+import org.apache.log4j.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -15,6 +17,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class UsersListServlet extends HttpServlet {
+    final Logger LOGGER = Logger.getLogger(UsersListServlet.class);
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -27,7 +31,7 @@ public class UsersListServlet extends HttpServlet {
             users = UserJDBCDaoImpl.getInstance().findAllUsers();
             req.setAttribute("users", users);
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
 
         String html = "/WEB-INF/admin-view/users-list.jsp";

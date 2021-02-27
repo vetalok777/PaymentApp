@@ -37,7 +37,6 @@
             border-radius: 6rem;
             width: 11%;
             margin-top: -3%;
-            transform: rotate(29deg);
         }
 
         .contact-form form {
@@ -129,7 +128,9 @@
 </div>
 
 <div class="container contact-form">
-
+    <div class="contact-image">
+        <img src="https://t3.ftcdn.net/jpg/01/00/85/72/360_F_100857287_vJD8X5JMSFxwvmls0W2A0ZY7xfVOYH9J.jpg" alt=""/>
+    </div>
     <form action="${pageContext.request.contextPath}/Payment" method="post">
         <h3><fmt:message
                 key="msg.newPayment"> </fmt:message></h3>

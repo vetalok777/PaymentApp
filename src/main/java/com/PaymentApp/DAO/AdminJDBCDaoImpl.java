@@ -2,6 +2,8 @@ package com.PaymentApp.DAO;
 
 import com.PaymentApp.entities.Admin;
 import com.PaymentApp.entities.User;
+import com.PaymentApp.servlets.user.UserHomePageServlet;
+import org.apache.log4j.Logger;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -14,13 +16,13 @@ public class AdminJDBCDaoImpl implements AdminDAO {
     private static final String FIND_ADMIN = "SELECT *  FROM admin WHERE login = (?);";
 
     private static AdminJDBCDaoImpl adminJDBCDaoImpl;
-
+    final Logger LOGGER = Logger.getLogger(AdminJDBCDaoImpl.class);
     public AdminJDBCDaoImpl() {
         try {
             Class.forName(DRIVER);
-            System.out.println("Successfully!");
+            LOGGER.info("Successfully loaded DRIVER");
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
     }
 
@@ -36,12 +38,11 @@ public class AdminJDBCDaoImpl implements AdminDAO {
         try {
             Context initContext = new InitialContext();
             Context envContext = (Context) initContext.lookup("java:/comp/env");
-
-
             DataSource ds = (DataSource) envContext.lookup("jdbc/PaymentDB");
             con = ds.getConnection();
+            LOGGER.info("Connection is successful");
         } catch (NamingException ex) {
-            ex.printStackTrace();
+            LOGGER.error(ex.getMessage());
         }
         return con;
     }
@@ -51,8 +52,9 @@ public class AdminJDBCDaoImpl implements AdminDAO {
         try {
             con.commit();
             con.close();
+            LOGGER.info("Connection commit and close successfully");
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            LOGGER.error(ex.getMessage());
         }
     }
 
@@ -60,8 +62,9 @@ public class AdminJDBCDaoImpl implements AdminDAO {
         try {
             con.rollback();
             con.close();
+            LOGGER.info("Connection rollback and close");
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            LOGGER.error(ex.getMessage());
         }
     }
 
@@ -81,8 +84,9 @@ public class AdminJDBCDaoImpl implements AdminDAO {
                 admin.setPassword(rs.getString("password"));
                 admin.setId(rs.getInt("id"));
             }
+            LOGGER.info("Admin was found");
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
             AdminJDBCDaoImpl.getInstance().rollbackAndClose(connection);
         } finally {
             assert connection != null;

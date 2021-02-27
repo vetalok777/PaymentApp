@@ -2,6 +2,8 @@ package com.PaymentApp.filters;
 
 import com.PaymentApp.DAO.AdminJDBCDaoImpl;
 import com.PaymentApp.entities.Admin;
+import com.PaymentApp.servlets.user.UserHomePageServlet;
+import org.apache.log4j.Logger;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +17,7 @@ public class CheckAdminFilter implements Filter {
 
     AdminJDBCDaoImpl adminJDBCDaoImpl = AdminJDBCDaoImpl.getInstance();
 
-
+    final Logger LOGGER = Logger.getLogger(CheckAdminFilter.class);
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
@@ -30,6 +32,7 @@ public class CheckAdminFilter implements Filter {
         String password = request.getParameter("password");
         PrintWriter out = response.getWriter();
         HttpSession session = request.getSession();
+        LOGGER.info("Check Admin Filter is working");
         try {
             System.out.println(login + " " + password);
             if (login == null || password == null) {
@@ -66,7 +69,7 @@ public class CheckAdminFilter implements Filter {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
 
     }

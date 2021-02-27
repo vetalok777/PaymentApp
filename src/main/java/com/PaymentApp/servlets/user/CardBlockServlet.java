@@ -3,6 +3,7 @@ package com.PaymentApp.servlets.user;
 import com.PaymentApp.DAO.CardJDBCDaoImpl;
 import com.PaymentApp.DAO.UnblockRequestDAOImpl;
 import com.PaymentApp.entities.UnblockRequest;
+import org.apache.log4j.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -15,6 +16,8 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 public class CardBlockServlet extends HttpServlet {
+
+    final Logger LOGGER = Logger.getLogger(CardBlockServlet.class);
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -36,8 +39,9 @@ public class CardBlockServlet extends HttpServlet {
                 CardJDBCDaoImpl.getInstance().blockCardById(cardId);
                 RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/user-view/block-successful.jsp");
                 dispatcher.forward(req, resp);
+                LOGGER.info("Submitted card block");
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOGGER.error(e.getMessage());
             }
         }
         if (req.getParameter("action").equals("unblock")) {
@@ -52,9 +56,10 @@ public class CardBlockServlet extends HttpServlet {
                     UnblockRequestDAOImpl.getInstance().insertRequest(unblockRequest);
                     RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/user-view/user-request.jsp");
                     dispatcher.forward(req, resp);
+                    LOGGER.info("Sent request for unblocking card");
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOGGER.error(e.getMessage());
             }
 
         }

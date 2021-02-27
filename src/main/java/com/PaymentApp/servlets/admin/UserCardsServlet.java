@@ -6,6 +6,8 @@ import com.PaymentApp.DAO.UserJDBCDaoImpl;
 import com.PaymentApp.entities.Card;
 
 import com.PaymentApp.entities.User;
+import com.PaymentApp.servlets.LogOutServlet;
+import org.apache.log4j.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -17,6 +19,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class UserCardsServlet extends HttpServlet {
+    final Logger LOGGER = Logger.getLogger(UserCardsServlet.class);
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -35,7 +39,7 @@ public class UserCardsServlet extends HttpServlet {
             RequestDispatcher dispatcher = req.getRequestDispatcher(jsp);
             dispatcher.forward(req, resp);
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
     }
 }

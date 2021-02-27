@@ -1,6 +1,7 @@
 package com.PaymentApp.servlets.user;
 
 import com.PaymentApp.DAO.CardJDBCDaoImpl;
+import org.apache.log4j.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -13,6 +14,7 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 
 public class CardReplenishmentServlet extends HttpServlet {
+    final Logger LOGGER = Logger.getLogger(CardReplenishmentServlet.class);
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -21,6 +23,7 @@ public class CardReplenishmentServlet extends HttpServlet {
         session.setAttribute("status", req.getParameter("status"));
         RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/user-view/user-replenishment.jsp");
         dispatcher.forward(req, resp);
+        LOGGER.info("Forwarding to user-replenishment.jsp");
     }
 
     @Override
@@ -41,7 +44,7 @@ public class CardReplenishmentServlet extends HttpServlet {
                     CardJDBCDaoImpl.getInstance().updateBalance(id, sum);
                     resp.sendRedirect(req.getContextPath() + "/HomePage");
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                   LOGGER.error(e.getMessage());
                 }
             } else {
                 RequestDispatcher requestDispatcher = req.getRequestDispatcher("/WEB-INF/errors-pages/ReplenishmentError.jsp");

@@ -182,5 +182,15 @@
         <url-pattern>/SignIn</url-pattern>
     </filter-mapping>
 
+    <listener>
+        <listener-class>com.PaymentApp.servlets.ContextListener</listener-class>
+    </listener>
+
+    <display-name>Log4jWebDemo1</display-name>
+
+    <context-param>
+        <param-name>log4j-config-location</param-name>
+        <param-value>WEB-INF/log4j.properties</param-value>
+    </context-param>
 
 </web-app>

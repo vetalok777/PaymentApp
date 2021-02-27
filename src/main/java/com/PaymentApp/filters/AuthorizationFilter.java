@@ -2,6 +2,8 @@ package com.PaymentApp.filters;
 
 import com.PaymentApp.DAO.UserJDBCDaoImpl;
 import com.PaymentApp.entities.User;
+import com.PaymentApp.servlets.user.UserHomePageServlet;
+import org.apache.log4j.Logger;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -13,7 +15,7 @@ import java.sql.SQLException;
 
 public class AuthorizationFilter implements Filter {
     UserJDBCDaoImpl userJDBCDaoImpl = UserJDBCDaoImpl.getInstance();
-
+    final Logger LOGGER = Logger.getLogger(AuthorizationFilter.class);
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
@@ -26,6 +28,7 @@ public class AuthorizationFilter implements Filter {
         String login = (String) request.getAttribute("email");
         String password = (String) request.getAttribute("password");
         PrintWriter out = servletResponse.getWriter();
+        LOGGER.info("Authorization filter working");
         try {
             User user = userJDBCDaoImpl.findUser(login);
             if (user != null) {
@@ -66,7 +69,7 @@ public class AuthorizationFilter implements Filter {
                 dispatcher.include(servletRequest, servletResponse);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
     }
 

@@ -4,6 +4,7 @@ import com.PaymentApp.DAO.CardJDBCDaoImpl;
 import com.PaymentApp.DAO.PaymentJDBCDaoImpl;
 import com.PaymentApp.entities.Card;
 import com.PaymentApp.entities.Payment;
+import org.apache.log4j.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -16,11 +17,14 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 public class PaymentServlet extends HttpServlet {
+    final Logger LOGGER = Logger.getLogger(PaymentServlet.class);
+
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/user-view/user-payment.jsp");
         dispatcher.forward(req, resp);
+        LOGGER.info("Forwarding to user-payment.jsp");
     }
 
     @Override
@@ -66,7 +70,7 @@ public class PaymentServlet extends HttpServlet {
                     }
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+               LOGGER.error(e.getMessage());
             }
         } else {
             RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/user-view/user-payment.jsp");

@@ -17,7 +17,7 @@
 
     <title>Home Page</title>
     <style>
-      
+
 
         .styled-table {
             border-collapse: collapse;

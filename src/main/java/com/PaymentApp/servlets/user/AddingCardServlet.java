@@ -4,6 +4,7 @@ import com.PaymentApp.DAO.CardJDBCDaoImpl;
 import com.PaymentApp.DAO.UserJDBCDaoImpl;
 import com.PaymentApp.entities.Card;
 import com.PaymentApp.entities.User;
+import org.apache.log4j.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -17,6 +18,8 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 
 public class AddingCardServlet extends HttpServlet {
+
+    final Logger LOGGER = Logger.getLogger(AddingCardServlet.class);
     public static String CARD_NAME_ALREADY_EXISTS = (" <style>\n" +
             "   .colortext {\n" +
             "     color: red; \n" +
@@ -40,6 +43,7 @@ public class AddingCardServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/user-view/add-card.jsp");
         dispatcher.forward(req, resp);
+        LOGGER.info("forwarding to add-card.jsp");
     }
 
     @Override
@@ -60,14 +64,16 @@ public class AddingCardServlet extends HttpServlet {
                     req.setAttribute("number", card.getNumber());
                     RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/user-view/add-successful.jsp");
                     dispatcher.forward(req, resp);
+                    LOGGER.info("forwarding to add-successful.jsp");
                 }
             } else {
                 out.println(CARD_NAME_INVALID);
                 RequestDispatcher dispatcher = req.getRequestDispatcher("/WEB-INF/user-view/add-card.jsp");
                 dispatcher.include(req, resp);
+                LOGGER.info("Card name invalid");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
 
     }
